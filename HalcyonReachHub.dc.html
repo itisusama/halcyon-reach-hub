@@ -1,0 +1,2049 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fraunces:wght@500&family=Noto+Nastaliq+Urdu&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/prop-types@15.8.1/prop-types.min.js"></script>
+<script src="https://unpkg.com/recharts@2.12.7/umd/Recharts.js"></script>
+<style>
+  :root{--evergreen:#0F3B2E;--evergreen-dark:#0A2A20;--gold:#C9A24B;--gold-soft:#E4CC8F;--cream:#F7F5EE;--charcoal:#1F2421;--stone:#6B6B63;--border:#E2DFD3;--danger:#A03A2E;--success:#4A7C59}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Inter,system-ui,sans-serif;background:var(--cream);color:var(--charcoal);font-size:14px;line-height:1.45}
+  a{color:var(--evergreen);text-decoration:none}
+  a:hover{color:var(--gold)}
+  h1,h2,h3,h4{margin:0}
+  .frn{font-family:Fraunces,Georgia,serif;font-weight:500;letter-spacing:-0.01em}
+  .urdu{font-family:'Noto Nastaliq Urdu',serif;direction:rtl}
+  .old-card{background:#fff;border:1px solid #999;border-radius:2px;padding:8px;font-size:12px;box-shadow:2px 2px 0 #ccc;font-family:Tahoma,Arial,sans-serif}
+  .old-btn{background:linear-gradient(#fff,#ddd);border:1px solid #555;border-radius:2px;padding:3px 12px;font-size:12px;box-shadow:2px 2px 3px rgba(0,0,0,.35);cursor:pointer;font-family:Tahoma,Arial,sans-serif;color:#000}
+  .old-btn:hover{background:linear-gradient(#eee,#ccc)}
+  .old-btn.gold{background:linear-gradient(#E4CC8F,#C9A24B);border-color:#8a6d2f;color:#1F2421;font-weight:bold}
+  .old-table{border-collapse:collapse;font-size:11px;width:100%;font-family:Tahoma,Arial,sans-serif}
+  .old-table th{background:#d8d8d0;border:1px solid #888;padding:3px 6px;text-align:left;font-weight:bold;color:#000}
+  .old-table td{border:1px solid #bbb;padding:2px 6px;vertical-align:top}
+  .old-table tr:nth-child(even) td{background:#ececec}
+  .new-card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:24px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+  .new-btn{background:var(--evergreen);color:#fff;border:0;border-radius:8px;padding:10px 18px;font-size:14px;font-weight:500;cursor:pointer;font-family:inherit}
+  .new-btn:hover{background:var(--evergreen-dark)}
+  .new-btn.gold{background:var(--gold);color:#1F2421}
+  .new-btn.gold:hover{background:var(--gold-soft)}
+  .new-btn.ghost{background:transparent;color:var(--evergreen);border:1px solid var(--border)}
+  .new-table{border-collapse:collapse;width:100%;font-size:14px}
+  .new-table th{text-align:left;padding:12px 16px;border-bottom:1px solid var(--border);color:var(--stone);font-weight:500;font-size:12px;text-transform:uppercase;letter-spacing:.04em}
+  .new-table td{padding:14px 16px;border-bottom:1px solid var(--border)}
+  .badge{display:inline-block;padding:2px 8px;border-radius:3px;font-size:11px;font-weight:600;font-family:Tahoma,Arial,sans-serif;letter-spacing:.02em}
+  input,select,textarea{font-family:inherit;font-size:14px;padding:8px 10px;border:1px solid var(--border);border-radius:6px;background:#fff;color:var(--charcoal);outline:none}
+  input:focus,select:focus,textarea:focus{border-color:var(--evergreen)}
+  ::-webkit-scrollbar{width:8px;height:8px}::-webkit-scrollbar-thumb{background:#d0cec2;border-radius:4px}
+  .navlink{display:block;padding:8px 20px;color:rgba(255,255,255,.82);font-size:13px;cursor:pointer;border-left:3px solid transparent}
+  .navlink:hover{background:rgba(255,255,255,.05);color:#fff}
+  .navlink.active{background:var(--evergreen-dark);border-left-color:var(--gold);color:#fff;font-weight:500}
+  .navgroup{padding:14px 20px 4px;font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.4);font-weight:600}
+  .modal-overlay{position:fixed;inset:0;background:rgba(15,59,46,.4);display:flex;align-items:center;justify-content:center;z-index:100;padding:24px}
+  .avatar{width:44px;height:44px;border-radius:50%;background:var(--gold);color:var(--evergreen-dark);display:flex;align-items:center;justify-content:center;font-weight:600;font-size:14px;flex-shrink:0}
+</style>
+</helmet>
+<sc-if value="{{ fullScreen }}" hint-placeholder-val="{{ false }}">
+  <div>{{ page }}</div>
+</sc-if>
+<sc-if value="{{ shellMode }}" hint-placeholder-val="{{ true }}">
+<div style="display:flex;min-height:100vh">
+  <aside style="width:240px;background:var(--evergreen);color:#fff;flex-shrink:0;display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto">
+    <div style="padding:18px 20px;border-bottom:1px solid rgba(255,255,255,.1);display:flex;align-items:center;gap:10px" onclick="{{ navHome }}">
+      <div style="width:22px;height:22px;border-radius:50%;background:var(--gold)"></div>
+      <div class="frn" style="font-size:18px;cursor:pointer">Halcyon Reach</div>
+    </div>
+    <nav style="padding:12px 0;flex:1">{{ sidebarEl }}</nav>
+    <div style="padding:12px 20px;font-size:10px;color:rgba(255,255,255,.4);border-top:1px solid rgba(255,255,255,.08);line-height:1.5">
+      hub v2019.4-patched<br>Zoya build #118 · Nov 2025
+    </div>
+  </aside>
+  <main style="flex:1;display:flex;flex-direction:column;min-width:0">
+    <header style="height:56px;background:var(--cream);border-bottom:1px solid var(--evergreen);display:flex;align-items:center;padding:0 24px;gap:16px;flex-shrink:0">
+      <input placeholder="Search the hub…" style="flex:1;max-width:420px">
+      <div style="flex:1"></div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <div style="width:32px;height:32px;border-radius:50%;background:var(--gold);color:var(--evergreen-dark);display:flex;align-items:center;justify-content:center;font-weight:600;font-size:12px">AD</div>
+        <div style="line-height:1.2">
+          <div style="font-weight:500;font-size:13px">Admin (You)</div>
+          <div style="font-size:11px;color:var(--stone)">Superadmin</div>
+        </div>
+      </div>
+    </header>
+    <div style="flex:1;padding:32px;max-width:1400px;width:100%">{{ page }}</div>
+  </main>
+</div>
+</sc-if>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:&quot;100%&quot;,&quot;height&quot;:900}}">
+const h = React.createElement;
+const R = (typeof window !== 'undefined' && window.Recharts) || {};
+
+// ========== ROSTER ==========
+const ROSTER_RAW = `R1|f|22|Ayesha Tariq|Senior Receptionist|Reception & Admin|1
+R2|f|26|Hira Malik|Front Desk Lead|Reception & Admin|1
+R3|m|34|Bilal Ahmed|Admin Coordinator|Reception & Admin|1
+T1|m|38|Usman Raza|Head of IT|IT|1
+T2|m|29|Hamza Iqbal|Network Administrator|IT|1
+T4|f|25|Zoya Khan|Junior Developer|IT|1
+T5|m|31|Faisal Nadeem|Systems Engineer|IT|1
+T6|m|27|Danish Qureshi|Help Desk Lead|IT|1
+H1|f|41|Sana Mahmood|Head of HR|HR|1
+H2|f|33|Rabia Yousaf|Recruitment Lead|HR|1
+H3|m|45|Kamran Sheikh|HR Business Partner|HR|1
+H5|f|28|Nida Aslam|HR Generalist|HR|1
+F1|m|44|Adnan Baig|Finance Director|Finance|1
+F2|f|35|Farah Siddiqui|Senior Accountant|Finance|1
+F3|m|39|Imran Chaudhry|AP/AR Manager|Finance|1
+F4|f|27|Maria Javed|Junior Accountant|Finance|1
+F5|m|30|Waleed Akram|Payroll Specialist|Finance|1
+F6|f|32|Sadia Rehman|Tax & Compliance|Finance|1
+F8|m|48|Tariq Butt|Senior Finance Controller|Finance|1
+C1|f|29|Iman Zafar|Senior Art Director|Creative|2
+C2|m|32|Zain Abbasi|Art Director|Creative|2
+C3|f|26|Amna Rasheed|Graphic Designer|Creative|2
+C4|f|24|Zara Haider|Junior Designer|Creative|2
+C5|m|27|Rohail Mirza|Motion Designer|Creative|2
+C6|m|31|Talha Farooq|Senior Visualiser|Creative|2
+C8|f|25|Mahnoor Saleem|Brand Identity Designer|Creative|2
+C9|m|28|Umair Shahid|Digital Designer|Creative|2
+C10|f|30|Anum Hussain|Senior Designer|Creative|2
+C11|f|23|Laiba Shah|Junior Designer|Creative|2
+C12|m|29|Bilawal Ansari|Senior Designer|Creative|2
+C13|f|26|Fatima Waqar|Print Designer|Creative|2
+C14|m|33|Shahzeb Naveed|Creative Director|Creative|2
+C16|f|25|Sarah Nawaz|Designer|Creative|2
+C17|m|30|Ahsan Majid|Brand Strategy Designer|Creative|2
+C19|f|27|Noor Aftab|Editorial Designer|Creative|2
+C20|m|31|Junaid Kazmi|Senior Print Designer|Creative|2
+C21|f|24|Kinza Rafique|Junior Designer|Creative|2
+C22|f|28|Areeba Jamil|Illustration Lead|Creative|2
+C23|m|34|Salman Ghazi|Associate Creative Director|Creative|2
+C25|f|23|Rimsha Tanveer|Junior Designer|Creative|2
+W1|f|30|Mehreen Bukhari|Head of Content|Copywriting|2
+W2|m|33|Hassan Zaidi|Senior Copywriter (Urdu)|Copywriting|2
+W3|f|26|Aiman Nasir|Copywriter|Copywriting|2
+W4|f|25|Dania Cheema|Copywriter|Copywriting|2
+W5|m|28|Osama Riaz|Script Copywriter|Copywriting|2
+W6|f|27|Nashwa Khalid|PR Copywriter|Copywriting|2
+W8|m|29|Ammar Yasin|Senior Copywriter|Copywriting|2
+W9|f|24|Areesha Afzal|Junior Copywriter|Copywriting|2
+W10|f|26|Warda Iftikhar|Copywriter|Copywriting|2
+W11|m|32|Fahad Sattar|Senior Copywriter (B2B)|Copywriting|2
+W12|f|28|Momina Waseem|Social Copywriter|Copywriting|2
+W14|m|30|Rehan Ashraf|Tech Copywriter|Copywriting|2
+W15|f|27|Bushra Khokhar|Localisation Lead|Copywriting|2
+V1|m|34|Saad Anwar|Head of Video Production|Video|2
+V2|m|31|Owais Latif|Senior Producer|Video|2
+V3|f|27|Neha Younus|Assistant Director|Video|2
+V4|m|29|Zeeshan Mustafa|Director of Photography|Video|2
+V6|f|25|Aleeza Saeed|Junior Editor|Video|2
+V7|m|30|Basit Ehsan|Senior Editor|Video|2
+V8|m|27|Haris Mahmoud|Camera Operator|Video|2
+V9|f|24|Jannat Mubarak|Junior Producer|Video|2
+V10|m|28|Mustafa Ali|Sound Engineer|Video|2
+V12|f|26|Sabeen Hafeez|Editor|Video|2
+V13|m|29|Yasir Taimoor|Junior Director|Video|2
+V14|m|32|Nabeel Ejaz|Production Manager|Video|2
+V15|f|25|Manaal Khursheed|Junior Colourist|Video|2
+ST1|m|38|Furqan Alvi|Head of Strategy|Strategy|2
+ST2|f|30|Komal Farhat|Senior Strategist|Strategy|2
+ST3|m|34|Abdul Rehman Naqvi|Senior Strategist|Strategy|2
+ST4|f|27|Fizza Bashir|Strategist|Strategy|2
+ST5|m|32|Wasim Qazi|Research Lead|Strategy|2
+ST6|f|28|Sidra Awan|Strategist|Strategy|2
+ST8|m|30|Moiz Khattak|Strategist|Strategy|2
+ST9|f|25|Hafsa Shaukat|Junior Strategist|Strategy|2
+ST10|m|33|Awais Mansoor|Senior Strategist|Strategy|2
+E1|m|54|Shahbaz Sethi|Chief Executive Officer|Executive|3
+E2|m|51|Faraz Habib|Chief Creative Officer|Executive|3
+E3|f|49|Rukhsana Zaman|Chief Operating Officer|Executive|3
+E4|m|46|Asif Jahangir|Executive Creative Director|Executive|3
+E5|f|47|Naila Zubair|Chief Financial Officer|Executive|3
+E6|m|52|Tanveer Mahmud|Chief Client Officer|Executive|3
+E8|f|44|Samina Dar|Chief Marketing Officer|Executive|3
+A1|f|35|Zunaira Shaikh|Group Account Director|Account Management|3
+A2|m|33|Ubaid Waheed|Account Director|Account Management|3
+A3|f|27|Alishba Junaidi|Senior Account Executive|Account Management|3
+A4|f|29|Mehwish Aziz|Senior Account Manager|Account Management|3
+A5|m|31|Ali Murtaza|Account Manager|Account Management|3
+A6|f|30|Iqra Farooqi|Senior Account Manager|Account Management|3
+A7|m|36|Shehryar Farid|Account Director|Account Management|3
+A8|f|28|Hania Sohail|Senior Account Manager|Account Management|3
+A10|f|26|Duaa Rizwan|Account Manager|Account Management|3
+A11|m|30|Kashan Umer|Account Manager|Account Management|3
+A12|f|29|Rabeeya Tahir|Senior Account Manager|Account Management|3
+A13|f|27|Sundas Rauf|Account Manager|Account Management|3
+A14|m|32|Faizan Ashfaq|Account Director|Account Management|3
+A15|f|26|Meerab Chandio|Account Manager|Account Management|3
+A17|m|34|Zohaib Dogar|Account Director|Account Management|3
+A18|f|28|Alina Perwaiz|Senior Account Manager|Account Management|3
+A19|f|25|Nayab Suleman|Account Executive|Account Management|3
+A20|m|29|Rayyan Nadir|Account Manager|Account Management|3
+A21|f|27|Eman Afridi|Account Manager|Account Management|3
+A22|m|33|Hasnain Ijaz|Account Director|Account Management|3
+A24|f|28|Mahrukh Yaseen|Senior Account Manager|Account Management|3
+A25|m|30|Adeel Bhatti|Account Manager|Account Management|3
+A26|f|26|Rida Manzoor|Account Manager|Account Management|3
+A27|f|24|Hoorain Saqib|Junior Account Executive|Account Management|3
+A28|m|34|Hussain Piracha|Account Director|Account Management|3
+A29|f|29|Fariha Yamin|Senior Account Manager|Account Management|3
+D1|m|34|Arsalan Toor|Head of Digital|Digital|3
+D2|f|27|Anaya Fazal|Senior Performance Marketer|Digital|3
+D3|m|29|Musa Chughtai|SEO Specialist|Digital|3
+D4|f|26|Zainab Mumtaz|Performance Marketer|Digital|3
+D5|m|31|Ibrahim Siddiq|Senior Paid Media|Digital|3
+D6|f|28|Roshaan Karamat|Digital Strategist|Digital|3
+D7|m|30|Waqas Younas|Performance Marketer|Digital|3
+D9|f|25|Aiza Munir|Junior Performance Marketer|Digital|3
+D10|m|27|Shaheer Gulzar|Junior Paid Media|Digital|3
+D11|f|29|Maryam Khalil|CRM Specialist|Digital|3
+D12|m|32|Numan Ghaznavi|Senior Performance Strategist|Digital|3
+D13|f|26|Barirah Hameed|Performance Marketer|Digital|3
+D14|m|28|Talal Warsi|Senior SEO Strategist|Digital|3
+D15|f|27|Nimra Sardar|Digital Strategist|Digital|3
+D17|m|31|Suleman Hoodbhoy|Senior Analytics Engineer|Digital|3
+D18|f|25|Wania Mustansar|Junior Digital Marketer|Digital|3
+D19|m|33|Abdullah Sherazi|Senior Performance Strategist|Digital|3
+D20|f|28|Hafsah Naqi|Performance Marketer|Digital|3
+D21|m|30|Rashid Anjum|Senior Paid Media|Digital|3
+D22|f|26|Aleena Farrukh|Performance Marketer|Digital|3
+D24|m|29|Sameer Hashmi|Senior Performance Marketer|Digital|3
+D25|f|24|Emaan Mahfooz|Junior Digital Marketer|Digital|3
+S1|f|28|Anmol Kausar|Head of Social Media|Social|3
+S2|f|26|Zoha Adnan|Senior Community Manager|Social|3
+S3|m|30|Haider Baloch|Senior Content Strategist|Social|3
+S4|f|25|Aroosa Yaqoob|Junior Content Creator|Social|3
+S5|f|27|Simran Bajwa|Senior Social Strategist|Social|3
+S6|m|29|Ramish Sarwar|Senior Content Producer|Social|3
+S7|f|26|Minahil Bilgrami|Senior Community Manager|Social|3
+S9|f|25|Tehreem Farhan|Junior Social Strategist|Social|3
+S10|m|28|Rafay Shabbir|Senior Content Creator|Social|3
+S11|f|27|Javeria Nawab|Senior Community Manager|Social|3
+S12|f|24|Zaib-un-Nisa Kayani|Junior Community Manager|Social|3
+S13|m|30|Anas Ghumman|Senior Social Media Manager|Social|3
+S14|f|26|Palwasha Durrani|Senior Content Creator|Social|3
+S16|f|25|Amber Rehmat|Junior Social Strategist|Social|3
+S17|m|29|Raheel Chishti|Senior Content Strategist|Social|3
+S18|f|24|Manahil Behzad|Junior Content Creator|Social|3
+P1|f|34|Saman Riffat|Head of PR & Communications|PR|3
+P2|m|42|Zahid Askari|Senior PR Strategist|PR|3
+P3|f|28|Maheen Yusuf|Senior PR Manager|PR|3
+P4|f|30|Sabahat Karim|Senior PR Manager|PR|3
+P5|m|32|Hamdan Sultan|PR Manager|PR|3
+P6|f|26|Areej Jibran|PR Executive|PR|3
+P7|m|29|Zaki Imran|PR Strategist|PR|3
+P9|f|27|Nudrat Salaar|PR Manager|PR|3
+P10|f|25|Nawal Baksh|Junior PR Executive|PR|3
+P12|m|31|Zaid Jilani|Senior PR Strategist|PR|3
+M1|m|36|Nauman Sabir|Head of Media Buying|Media Buying|3
+M2|f|30|Zaryab Idrees|Senior Media Planner|Media Buying|3
+M3|m|32|Sarim Akbar|Senior Media Buyer|Media Buying|3
+M4|f|27|Ayla Haq|Media Planner|Media Buying|3
+M5|m|34|Fawad Kardar|Senior Media Buyer (OOH)|Media Buying|3
+M6|f|26|Shifa Osmani|Media Planner|Media Buying|3
+M7|m|29|Danyal Mehmood|Media Buyer (Radio)|Media Buying|3
+M9|f|28|Nashmia Kohli|Senior Media Planner|Media Buying|3
+M10|m|33|Zubair Lodhi|Senior Media Strategist|Media Buying|3
+M11|f|25|Ruhaab Salahuddin|Junior Media Planner|Media Buying|3
+M13|m|30|Aitzaz Wali|Media Buyer (Digital)|Media Buying|3
+M14|f|26|Fajr Barlas|Media Planner|Media Buying|3
+M15|m|34|Hadi Rajput|Senior Media Buyer|Media Buying|3
+I1|m|36|Aabis Mengal|Head of Analytics & Insights|Analytics|3
+I2|f|29|Zonaira Fatima|Senior Data Analyst|Analytics|3
+I3|m|31|Ahmer Lashari|Senior Insights Analyst|Analytics|3
+I4|m|33|Bakhtiar Suri|Senior Data Scientist|Analytics|3
+I5|f|27|Sameen Vardag|Insights Analyst|Analytics|3
+I6|m|30|Salaar Feroz|Senior Analytics Engineer|Analytics|3
+I7|f|26|Alizeh Bugti|Insights Analyst|Analytics|3
+I8|m|32|Umar Khaqan|Senior Data Analyst|Analytics|3
+I10|f|25|Yumna Abro|Junior Insights Analyst|Analytics|3
+I11|m|28|Hunain Jatoi|Data Analyst|Analytics|3`;
+
+const VACANT_IDS = ['R4','H4','H6','T3','F7','C7','C15','C18','C24','W7','W13','V5','V11','ST7','A9','A16','A23','A30','D8','D16','D23','S8','S15','P8','P11','M8','M12','I9','I12','E7'];
+
+// manager mapping: dept -> head id; head reports as noted in brief
+const HEAD = {'Reception & Admin':'R2','IT':'T1','HR':'H1','Finance':'F1','Creative':'C1','Copywriting':'W1','Video':'V1','Strategy':'ST1','Executive':'E1','Account Management':'E6','Digital':'D1','Social':'S1','PR':'P1','Media Buying':'M1','Analytics':'I1'};
+// where each head reports
+const HEAD_UP = {'R2':'H1','R3':'H1','T1':'E1','H1':'E3','F1':'E5','C1':'E2','W1':'E2','V1':'E2','ST1':'E1','D1':'E8','S1':'E8','P1':'E8','M1':'E4','I1':'E4','E2':'E1','E3':'E1','E4':'E1','E5':'E1','E6':'E1','E8':'E1'};
+
+const PEOPLE = (() => {
+  const arr = ROSTER_RAW.trim().split('\n').map((line, idx) => {
+    const [id,gender,age,name,role,dept,floor] = line.split('|');
+    const [first, ...rest] = name.split(' ');
+    const last = rest.join('.').toLowerCase();
+    const email = first.toLowerCase() + '.' + last.replace(/[^a-z]/g,'') + '@halcyonreach.com';
+    return { id, code:id, name, gender, age:+age, role, department:dept, floor:+floor, email, extension: String(200 + idx).slice(-3).padStart(3,'0'), vacant:false };
+  });
+  // manager assignment
+  arr.forEach(p => {
+    if (HEAD_UP[p.id]) { p.managerId = HEAD_UP[p.id]; }
+    else if (p.id === 'E1') { p.managerId = null; }
+    else { p.managerId = HEAD[p.department]; }
+  });
+  // vacants
+  VACANT_IDS.forEach(vid => arr.push({ id:vid, code:vid, vacant:true, department: deptFromId(vid), floor: floorFromDept(deptFromId(vid)) }));
+  return arr;
+})();
+
+function deptFromId(id) {
+  const prefix = id.match(/^[A-Z]+/)[0];
+  return {R:'Reception & Admin',T:'IT',H:'HR',F:'Finance',C:'Creative',W:'Copywriting',V:'Video',ST:'Strategy',E:'Executive',A:'Account Management',D:'Digital',S:'Social',P:'PR',M:'Media Buying',I:'Analytics'}[prefix];
+}
+function floorFromDept(d) {
+  return ({'Reception & Admin':1,'IT':1,'HR':1,'Finance':1,'Creative':2,'Copywriting':2,'Video':2,'Strategy':2})[d] || 3;
+}
+function findPerson(id) { return PEOPLE.find(p => p.id === id); }
+function findByName(name) { return PEOPLE.find(p => p.name === name); }
+function initials(n) { return n.split(' ').map(s=>s[0]).slice(0,2).join('').toUpperCase(); }
+
+// ========== DATE HELPERS ==========
+function today() { const d = new Date(); d.setHours(0,0,0,0); return d; }
+function subDays(d,n) { const x = new Date(d); x.setDate(x.getDate()-n); return x; }
+function addDays(d,n) { return subDays(d,-n); }
+function fmt(d) { return d.toISOString().slice(0,10); }
+function fmtNice(d) { return d.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}); }
+function fmtDay(d) { return d.toLocaleDateString('en-GB',{weekday:'short',day:'2-digit',month:'short'}); }
+function pad(n){return String(n).padStart(2,'0')}
+function hm(h,m){return pad(h)+':'+pad(m)}
+
+// most recent Tuesday at least 2 days ago
+function recentTuesday() {
+  let d = subDays(today(), 2);
+  while (d.getDay() !== 2) d = subDays(d, 1);
+  return d;
+}
+const RECENT_TUE = recentTuesday();
+
+// ========== SEED: VISITORS ==========
+// deterministic PRNG
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+const rng = mulberry32(20260926);
+function pick(arr){return arr[Math.floor(rng()*arr.length)]}
+
+const NAMED_HOSTS = PEOPLE.filter(p=>!p.vacant && (p.floor===2||p.floor===3||p.id==='E1'||p.id==='F1'||p.id==='H1'||p.id==='T1'));
+const VISITOR_NAMES = ['Ali Raza','Shaheen Butt','Nadia Khan','Umar Tariq','Sara Jamil','Mohammad Yusuf','Farhan Aziz','Ayesha Bhatti','Kashif Nadeem','Sadia Mir','Owais Ahmed','Rukaiya Sultan','Bilal Zafar','Nusrat Khaliq','Junaid Kamal','Rabia Aftab','Shoaib Malik','Hina Rasheed','Fahad Rana','Sara Cheema','Adil Iqbal','Nazia Kaleem','Mohsin Ali','Tehmina Baig','Kamran Aslam','Ambreen Shah','Shafqat Hussain','Neha Fatima','Waqar Ashraf','Zainab Nisar','Rehan Qamar','Sundas Awan','Shan Masood','Iram Shahzad','Aleem Dar','Nabila Yousaf','Owais Bin Haris','Falak Sher','Anosh Dar','Zara Aftab','Salman Iqbal','Meher Jamil','Hassan Zaka','Mahnoor Rehman','Bilal Munir','Sania Farooq','Danyal Amin','Sadaf Imtiaz','Yasir Bhutta','Roshaan Ali','Anaya Ilyas','Sarmad Rauf','Kiran Waseem','Umair Zafar','Mishal Ilyas','Waseem Akhtar','Hafsa Nadeem','Talha Bin Ali','Bushra Rafiq','Shaista Malik'];
+const PURPOSES = ['Client meeting','Vendor delivery','Interview','Media pitch','Delivery','Accounts collection','Contract signing','Recruitment','Portfolio review','Quarterly review','Freelance briefing','Coffee meeting'];
+
+const VISITORS_SEED = (() => {
+  const out = [];
+  let seq = 1;
+  // 30 days
+  for (let dayBack = 30; dayBack >= 0; dayBack--) {
+    const day = subDays(today(), dayBack);
+    const dow = day.getDay(); // 0 sun..6 sat
+    if (dow === 0) continue; // office closed sundays
+    // 3-5 normal visitors
+    const n = 3 + Math.floor(rng()*3);
+    for (let i=0;i<n;i++) {
+      const host = pick(NAMED_HOSTS);
+      const hIn = 9 + Math.floor(rng()*8);
+      const mIn = Math.floor(rng()*60);
+      const durH = 1 + Math.floor(rng()*3);
+      out.push({
+        id: 'V'+String(seq++).padStart(5,'0'),
+        date: day, dow,
+        timeIn: hm(hIn,mIn),
+        timeOut: hm(Math.min(hIn+durH,19), Math.floor(rng()*60)),
+        name: pick(VISITOR_NAMES),
+        hostId: host.id,
+        hostName: host.name,
+        purpose: pick(PURPOSES),
+        status: 'OK'
+      });
+    }
+  }
+  // 6 FAILED TO WRITE clustered Tue afternoons / Fri mornings, 4 with Faraz
+  const faraz = findPerson('E2');
+  const failSlots = [
+    { day: RECENT_TUE, hour: 15, min: 42, host: faraz },
+    { day: RECENT_TUE, hour: 16, min: 18, host: faraz },
+    { day: subDays(RECENT_TUE,7), hour: 15, min: 8, host: faraz },
+    { day: (() => { let d = subDays(today(),2); while(d.getDay()!==5) d = subDays(d,1); return d; })(), hour: 10, min: 44, host: faraz },
+    { day: (() => { let d = subDays(today(),9); while(d.getDay()!==5) d = subDays(d,1); return d; })(), hour: 11, min: 22, host: findPerson('E4') },
+    { day: subDays(RECENT_TUE,14), hour: 16, min: 3, host: findPerson('C14') },
+  ];
+  failSlots.forEach(s => {
+    out.push({
+      id: 'V'+String(seq++).padStart(5,'0'),
+      date: s.day, dow: s.day.getDay(),
+      timeIn: hm(s.hour, s.min), timeOut: '',
+      name: pick(VISITOR_NAMES),
+      hostId: s.host.id, hostName: s.host.name,
+      purpose: pick(PURPOSES),
+      status: 'FAILED TO WRITE'
+    });
+  });
+  // 4 overrides in last 30d
+  const overrideSlots = [
+    { day: subDays(today(), 3), hour: 19, min: 8 },
+    { day: subDays(today(), 11), hour: 18, min: 47 },
+    { day: subDays(today(), 17), hour: 20, min: 12 },
+    { day: subDays(today(), 24), hour: 21, min: 3 },
+  ];
+  overrideSlots.forEach(s => {
+    out.push({
+      id: 'V'+String(seq++).padStart(5,'0'),
+      date: s.day, dow: s.day.getDay(),
+      timeIn: hm(s.hour, s.min), timeOut: '',
+      name: '—', hostId: '—', hostName: '—',
+      purpose: '—',
+      status: 'OVERRIDE — Bilal Ahmed'
+    });
+  });
+  // sort by datetime desc
+  return out.sort((a,b) => {
+    const ta = a.date.getTime() + parseInt(a.timeIn.replace(':',''),10);
+    const tb = b.date.getTime() + parseInt(b.timeIn.replace(':',''),10);
+    return tb - ta;
+  });
+})();
+
+// ========== SEED: 12mo failed writes for glitches ==========
+const FAIL_12MO = (() => {
+  const out = [];
+  const faraz = findPerson('E2');
+  const otherHosts = NAMED_HOSTS.filter(p => p.id !== 'E2');
+  for (let w=0;w<52;w++) {
+    // Tue cluster 15-17
+    if (rng() < 0.75) {
+      const d = subDays(today(), w*7 + (rng()<.5?0:7));
+      let t = new Date(d); while (t.getDay()!==2) t = subDays(t,1);
+      const isFaraz = rng() < 0.62;
+      out.push({ date: t, dow: 2, hour: 15+Math.floor(rng()*3), min: Math.floor(rng()*60), hostId: isFaraz ? 'E2' : pick(otherHosts).id });
+    }
+    // Fri cluster 10-12
+    if (rng() < 0.55) {
+      const d = subDays(today(), w*7);
+      let t = new Date(d); while (t.getDay()!==5) t = subDays(t,1);
+      const isFaraz = rng() < 0.45;
+      out.push({ date: t, dow: 5, hour: 10+Math.floor(rng()*3), min: Math.floor(rng()*60), hostId: isFaraz ? 'E2' : pick(otherHosts).id });
+    }
+    // scattered noise
+    if (rng() < 0.25) {
+      const d = subDays(today(), w*7 + Math.floor(rng()*7));
+      out.push({ date: d, dow: d.getDay(), hour: 9+Math.floor(rng()*9), min: Math.floor(rng()*60), hostId: pick(otherHosts).id });
+    }
+  }
+  return out.filter(e => e.dow !== 0);
+})();
+
+// ========== SEED: COURIERS ==========
+const COURIER_COS = ['TCS','Leopards','DHL','FedEx','M&P','Blue-Ex','Post Office'];
+const COURIERS_SEED = (() => {
+  const out = [];
+  let seq = 3400;
+  for (let i=0;i<38;i++) {
+    const day = subDays(today(), Math.floor(rng()*45));
+    const dir = rng() < 0.6 ? 'inbound' : 'outbound';
+    const person = pick(NAMED_HOSTS);
+    out.push({
+      id: 'CX'+(seq++),
+      date: day,
+      timeIn: hm(9+Math.floor(rng()*9), Math.floor(rng()*60)),
+      direction: dir,
+      company: pick(COURIER_COS),
+      waybill: 'AWB' + Math.floor(rng()*9e8+1e8),
+      counterparty: dir === 'inbound' ? person.name + ' (' + person.id + ')' : pick(['Nestlé Pakistan','Unilever','Telenor HQ','HBL Marketing','Coca-Cola','Engro','Bank Alfalah','Foodpanda']),
+      handledBy: pick(['Hira Malik','Ayesha Tariq','Bilal Ahmed']),
+      note: ''
+    });
+  }
+  // DHL 19:02 recent Tue to Faraz
+  out.push({
+    id: 'CX'+(seq++),
+    date: RECENT_TUE, timeIn: '19:02',
+    direction: 'inbound', company: 'DHL', waybill: 'AWB742301884',
+    counterparty: 'Faraz Habib (E2)',
+    handledBy: 'Hira Malik',
+    note: 'Not in building per calendar.', flag: true
+  });
+  // 3 Meridian Express last quarter
+  const meridianDays = [subDays(today(), 12), subDays(today(), 46), subDays(today(), 71)];
+  meridianDays.forEach((d,i) => {
+    out.push({
+      id: 'CX'+(seq++),
+      date: d, timeIn: hm(17+i, 22+i*7),
+      direction: 'inbound', company: 'Meridian Express', waybill: 'MRE' + (98120 + i),
+      counterparty: 'Faraz Habib (E2)',
+      handledBy: 'Hira Malik',
+      note: 'Not in building per calendar.', flag: true
+    });
+  });
+  return out.sort((a,b) => b.date - a.date || b.timeIn.localeCompare(a.timeIn));
+})();
+
+// ========== SEED: TICKETS ==========
+const TICKET_SUBJECTS = ['Laptop not booting','Email not syncing','VPN keeps dropping','Printer offline','Adobe licence expired','Slow internet','Password reset','Monitor flickering','Wi-Fi weak in cabin','Zoom audio broken','Outlook crashes','Keyboard replacement','Screen recording issue','External drive not detected','Shared folder access','Two-factor lockout'];
+const IT_STAFF = ['Danish Qureshi','Hamza Iqbal','Faisal Nadeem'];
+const TICKETS_SEED = (() => {
+  const out = [];
+  let seq = 8140;
+  const raisers = PEOPLE.filter(p=>!p.vacant);
+  for (let i=0;i<47;i++) {
+    const day = subDays(today(), Math.floor(rng()*40));
+    const raiser = pick(raisers);
+    const closed = rng() < 0.78;
+    const assignee = rng() < 0.6 ? 'Danish Qureshi' : pick(IT_STAFF);
+    out.push({
+      id: '#'+(seq++),
+      raisedBy: raiser.name + ' (' + raiser.id + ')',
+      raiserFloor: raiser.floor,
+      subject: pick(TICKET_SUBJECTS),
+      priority: pick(['Low','Med','High']),
+      assignedTo: assignee,
+      status: closed ? 'Closed' : pick(['Open','In Progress','Waiting']),
+      closedBy: closed ? assignee : '',
+      resolutionNote: closed ? pick(['Replaced cable','Reinstalled driver','Reset network stack','Reauthorised licence','Cleared cache','Escalated to vendor']) : '',
+      date: day
+    });
+  }
+  // 3 anomalous — floor 3, closed with SYSTEM/blank
+  const anomFloor3 = PEOPLE.filter(p=>p.floor===3 && !p.vacant);
+  for (let i=0;i<3;i++) {
+    const p = pick(anomFloor3);
+    out.push({
+      id: '#'+(seq++),
+      raisedBy: p.name + ' (' + p.id + ')',
+      raiserFloor: 3,
+      subject: pick(['Machine wiped','Remote-lock triggered','Session terminated']),
+      priority: 'High',
+      assignedTo: 'Danish Qureshi',
+      status: 'Closed',
+      closedBy: rng() < 0.5 ? 'SYSTEM' : '',
+      resolutionNote: '',
+      date: subDays(today(), 5+i*8),
+      anomaly: true
+    });
+  }
+  return out.sort((a,b) => b.date - a.date);
+})();
+
+// ticket that never made the digital system — for Faisal's paper log
+const PAPER_TICKET_ONLY = {
+  id: '(paper only)',
+  raisedBy: 'Iman Zafar (C1) — flagged verbally by Zoya Khan',
+  subject: 'Repeat SYSTEM-closure event — request full audit',
+  raisedOn: subDays(today(), 4),
+  note: 'Faraz walked into IT and asked Danish to close it. Danish said yes. Faisal wrote it in the paper log because the digital ticket "went weird".'
+};
+
+// ========== SEED: SUPERUSER LOG ==========
+const SUPERUSER_LOG = (() => {
+  const out = [];
+  const modules = ['People Directory','Payroll','Exec Calendar','Job Postings','Announcements','Visitor Log','Analytics — Executive','Access Audit'];
+  for (let i=0;i<15;i++) {
+    const daysBack = 30 + Math.floor(rng()*1000);
+    const d = subDays(today(), daysBack);
+    d.setHours(0,0,0,0);
+    const hour = 22 + Math.floor(rng()*3) - (rng()<.3?12:0);
+    out.push({
+      date: d,
+      time: hm((hour%24+24)%24, Math.floor(rng()*60)),
+      module: pick(modules.filter(m=>m!=='Visitor Log')),
+      action: 'READ',
+      ip: '203.135.' + Math.floor(rng()*255) + '.' + Math.floor(rng()*255)
+    });
+  }
+  // 2 OVERRIDE on visitor log
+  out.push({ date: subDays(today(), 47), time: '23:14', module:'Visitor Log', action:'OVERRIDE', ip:'203.135.148.62' });
+  out.push({ date: subDays(today(), 6), time: '02:03', module:'Visitor Log', action:'OVERRIDE', ip:'203.135.148.62' });
+  return out.sort((a,b) => b.date - a.date);
+})();
+
+// ========== SEED: BILAL PIN OVERRIDES (year) ==========
+const BILAL_OVERRIDES = (() => {
+  const out = [];
+  for (let i=0;i<47;i++) {
+    const d = subDays(today(), Math.floor(rng()*360));
+    out.push({ date:d, time: hm(18+Math.floor(rng()*4), Math.floor(rng()*60)), pin: '4471', reason: pick(['Escort — no name captured','After-hours visitor','Executive escort','No name captured']) });
+  }
+  return out.sort((a,b) => b.date - a.date);
+})();
+
+// ========== JOB POSTINGS ==========
+const JOBS = [
+  { id:'J-201', title:'Senior Copywriter (Urdu)', dept:'Copywriting', floor:2, posted: subDays(today(),14), closes: 21 },
+  { id:'J-202', title:'Motion Designer', dept:'Creative', floor:2, posted: subDays(today(),8), closes: 24 },
+  { id:'J-203', title:'Account Manager — FMCG', dept:'Account Management', floor:3, posted: subDays(today(),21), closes: 9 },
+  { id:'J-204', title:'Senior Data Analyst', dept:'Analytics', floor:3, posted: subDays(today(),5), closes: 30 },
+  { id:'J-205', title:'Junior SEO Specialist', dept:'Digital', floor:3, posted: subDays(today(),18), closes: 12 },
+  { id:'J-206', title:'Media Planner — Digital', dept:'Media Buying', floor:3, posted: subDays(today(),3), closes: 32 },
+  { id:'J-207', title:'Assistant Producer', dept:'Video', floor:2, posted: subDays(today(),29), closes: 3 },
+  { id:'J-208', title:'Reception / Admin Support', dept:'Reception & Admin', floor:1, posted: subDays(today(),11), closes: 20 },
+];
+// Note: no PR postings — story anomaly.
+
+// ========== TOWN HALLS ==========
+const TOWNHALLS = (() => {
+  const out = [];
+  const now = new Date();
+  const yr = now.getFullYear();
+  const quarters = [
+    {y:yr, q:2}, {y:yr, q:1},
+    {y:yr-1, q:4}, {y:yr-1, q:3}, {y:yr-1, q:2}, {y:yr-1, q:1},
+    {y:yr-2, q:4}, {y:yr-2, q:3}
+  ];
+  quarters.forEach(({y,q}) => {
+    const isMissing = (y===yr-1 && q===3);
+    out.push({
+      id: `TH-${y}Q${q}`, title: `Q${q} ${y} Town Hall`,
+      date: new Date(y, (q-1)*3+2, 15),
+      duration: isMissing ? '—' : (42 + Math.floor(rng()*20)) + ' min',
+      missing: isMissing
+    });
+  });
+  return out;
+})();
+
+// ========== ANALYTICS ==========
+function makeSeries(n, base, jitter) {
+  const out = [];
+  for (let i=0;i<n;i++) out.push({ month: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][i], value: Math.floor(base + Math.sin(i/2)*jitter*.4 + rng()*jitter) });
+  return out;
+}
+const ANALYTICS = {
+  revenue: [
+    { account:'Nestlé Pakistan', value: 128.4 },
+    { account:'Telenor', value: 96.2 },
+    { account:'HBL', value: 72.5 },
+    { account:'Unilever', value: 68.9 },
+    { account:'Bank Alfalah', value: 54.1 },
+    { account:'Coca-Cola', value: 42.0 },
+    { account:'Engro', value: 31.7 }
+  ],
+  utilisation: [
+    { team:'Creative', value: 82 },
+    { team:'Copy', value: 74 },
+    { team:'Video', value: 91 },
+    { team:'Strategy', value: 68 },
+    { team:'Digital', value: 88 },
+    { team:'Social', value: 79 }
+  ],
+  profitability: makeSeries(12, 22, 8),
+  mediaPerf: makeSeries(12, 480, 90)
+};
+
+// ========== SIDEBAR ==========
+const SIDEBAR = [
+  { group: 'My work', items: [
+    ['Dashboard','/dashboard'], ['Timesheets','/timesheets'], ['Job bags','/job-bags']
+  ]},
+  { group: 'Building', items: [
+    ['Visitor log','/visitor-log'], ['Kiosk view','/visitor-log/tablet'],
+    ['Couriers','/couriers'], ['Meeting rooms','/rooms'], ['Facilities','/facilities']
+  ]},
+  { group: 'People', items: [
+    ['Directory','/directory'], ['Org chart','/org-chart'], ['Exec calendar','/calendar/executives']
+  ]},
+  { group: 'HR', items: [
+    ['Job postings','/job-postings'], ['Leave','/hr/leave'], ['Payslips','/hr/payslips'],
+    ['Engagement survey','/hr/survey'], ['Policies','/hr/policies'], ['Onboarding','/hr/onboarding']
+  ]},
+  { group: 'Finance', items: [
+    ['Expenses','/expenses'], ['Invoices','/invoices'], ['Month-end','/month-end']
+  ]},
+  { group: 'IT', items: [
+    ['Tickets','/tickets'], ['Raise a ticket','/tickets/new']
+  ]},
+  { group: 'Analytics', items: [
+    ['Dashboards','/analytics']
+  ]},
+  { group: 'Comms', items: [
+    ['Announcements','/announcements'], ['Town halls','/town-halls']
+  ]},
+  { group: 'Fleet', items: [
+    ['Driver tracker','/fleet']
+  ]},
+  { group: 'Admin', items: [
+    ['Admin home','/admin'], ['Superuser log','/admin/superuser-log'],
+    ['Sign-in overrides','/admin/overrides'], ['Glitch clusters','/admin/glitches'],
+    ['Access audit','/admin/access'], ['Module version map','/admin/modules']
+  ]}
+];
+
+// ========== COMMON UI HELPERS ==========
+const S = { // style objects
+  pageTitle: { fontSize: 32 },
+  pageSub: { color: 'var(--stone)', marginTop: 6, marginBottom: 28 },
+  h2New: { fontSize: 20, fontFamily: 'Fraunces, serif', fontWeight: 500, marginBottom: 12 },
+  oldTitle: { fontFamily:'Tahoma,Arial,sans-serif', background:'#0F3B2E', color:'#fff', padding:'6px 10px', fontSize:13, fontWeight:'bold', letterSpacing:'.02em', border:'1px solid #000' },
+  row: { display:'flex', gap:16 },
+  col: { display:'flex', flexDirection:'column', gap:16 }
+};
+
+function PageTitle({ title, sub }) {
+  return h('div', { style: { marginBottom: 28 } },
+    h('h1', { className:'frn', style: S.pageTitle }, title),
+    sub ? h('div', { style: S.pageSub }, sub) : null
+  );
+}
+function Badge({ children, color }) {
+  const map = {
+    ok: { bg:'#dcdcd0', c:'#3a3a30' },
+    fail: { bg:'#f4d4cf', c:'#7a1e13' },
+    override: { bg:'#f4e2b8', c:'#6b4a08' },
+    green: { bg:'#dfeee2', c:'#28502e' },
+    amber: { bg:'#f4e2b8', c:'#6b4a08' },
+    red: { bg:'#f4d4cf', c:'#7a1e13' },
+    grey: { bg:'#e4e2d7', c:'#4a4a3f' }
+  };
+  const c = map[color] || map.grey;
+  return h('span', { className:'badge', style: { background: c.bg, color: c.c } }, children);
+}
+function Avatar({ p, size=44 }) {
+  if (!p || p.vacant) return h('div', { style: { width:size, height:size, borderRadius:'50%', background:'#eae7d9', color:'#8a8a7a', display:'flex', alignItems:'center', justifyContent:'center', fontSize:11 } }, 'vacant');
+  return h('div', { className:'avatar', style: { width:size, height:size, fontSize: size*.32 } }, initials(p.name));
+}
+
+// ========== COMPONENT ==========
+class Component extends DCLogic {
+  state = {
+    route: (typeof window !== 'undefined' && window.location.hash.slice(1)) || '/login',
+    visitorsExtra: [],
+    ticketsExtra: [],
+    view: {}, // per-page transient
+    modal: null
+  };
+
+  componentDidMount() {
+    window.addEventListener('hashchange', this._hc);
+    try {
+      const v = JSON.parse(localStorage.getItem('hr_visitors_extra') || '[]');
+      const t = JSON.parse(localStorage.getItem('hr_tickets_extra') || '[]');
+      // rehydrate dates
+      v.forEach(x => x.date = new Date(x.date));
+      t.forEach(x => x.date = new Date(x.date));
+      this.setState({ visitorsExtra: v, ticketsExtra: t });
+    } catch(e) {}
+    try {
+      const u = JSON.parse(localStorage.getItem('hr_currentUser') || 'null');
+      if (!u) localStorage.setItem('hr_currentUser', JSON.stringify({ name:'Admin (You)', role:'superadmin' }));
+    } catch(e) {}
+  }
+  componentWillUnmount() { window.removeEventListener('hashchange', this._hc); }
+  _hc = () => this.setState({ route: window.location.hash.slice(1) || '/dashboard', modal:null });
+
+  nav = (path) => { window.location.hash = path; };
+  navHome = () => { window.location.hash = '/dashboard'; };
+
+  addVisitor = (v) => {
+    const rec = { ...v, id: 'V-live-'+Date.now(), date: today(), dow: today().getDay(), timeIn: hm(new Date().getHours(), new Date().getMinutes()), timeOut: '', status: 'OK' };
+    const next = [rec, ...this.state.visitorsExtra];
+    this.setState({ visitorsExtra: next });
+    localStorage.setItem('hr_visitors_extra', JSON.stringify(next));
+    return rec;
+  };
+  addTicket = (t) => {
+    const seq = 8200 + this.state.ticketsExtra.length;
+    const rec = { ...t, id:'#'+seq, date: today(), status:'Open', assignedTo:'Danish Qureshi', closedBy:'', resolutionNote:'', raiserFloor: (findPerson(t.raiserId||'')||{floor:3}).floor };
+    const next = [rec, ...this.state.ticketsExtra];
+    this.setState({ ticketsExtra: next });
+    localStorage.setItem('hr_tickets_extra', JSON.stringify(next));
+    return rec;
+  };
+
+  openModal = (m) => this.setState({ modal: m });
+  closeModal = () => this.setState({ modal: null });
+  setView = (patch) => this.setState({ view: { ...this.state.view, ...patch } });
+
+  renderSidebar(route) {
+    return h('div', null, SIDEBAR.map(grp =>
+      h('div', { key: grp.group },
+        h('div', { className:'navgroup' }, grp.group),
+        grp.items.map(([label, path]) =>
+          h('div', {
+            key: path,
+            className: 'navlink' + (route === path ? ' active' : ''),
+            onClick: () => this.nav(path)
+          }, label)
+        )
+      )
+    ));
+  }
+
+  renderPage(route) {
+    const P = this.pages();
+    const key = route.replace(/\/$/, '') || '/dashboard';
+    if (P[key]) return P[key]();
+    // dynamic /directory/:id
+    if (/^\/directory\//.test(key)) return this.pageDirectoryProfile(key.split('/')[2]);
+    if (/^\/job-bags\//.test(key)) return this.pageJobBagDetail(key.split('/')[2]);
+    return P['/dashboard']();
+  }
+
+  pages() {
+    return {
+      '/login': () => this.pageLogin(),
+      '/dashboard': () => this.pageDashboard(),
+      '/visitor-log': () => this.pageVisitorLog(),
+      '/visitor-log/tablet': () => this.pageTablet(),
+      '/couriers': () => this.pageCouriers(),
+      '/rooms': () => this.pageRooms(),
+      '/facilities': () => this.pageFacilities(),
+      '/directory': () => this.pageDirectory(),
+      '/org-chart': () => this.pageOrgChart(),
+      '/calendar/executives': () => this.pageExecCalendar(),
+      '/job-postings': () => this.pageJobPostings(),
+      '/hr/leave': () => this.pageLeave(),
+      '/hr/payslips': () => this.pagePayslips(),
+      '/hr/survey': () => this.pageSurvey(),
+      '/hr/policies': () => this.pagePolicies(),
+      '/hr/onboarding': () => this.pageOnboarding(),
+      '/expenses': () => this.pageExpenses(),
+      '/invoices': () => this.pageInvoices(),
+      '/month-end': () => this.pageMonthEnd(),
+      '/tickets': () => this.pageTickets(),
+      '/tickets/new': () => this.pageTicketNew(),
+      '/timesheets': () => this.pageTimesheets(),
+      '/job-bags': () => this.pageJobBags(),
+      '/analytics': () => this.pageAnalytics(),
+      '/announcements': () => this.pageAnnouncements(),
+      '/town-halls': () => this.pageTownHalls(),
+      '/fleet': () => this.pageFleet(),
+      '/admin': () => this.pageAdmin(),
+      '/admin/superuser-log': () => this.pageSuperuserLog(),
+      '/admin/overrides': () => this.pageOverrides(),
+      '/admin/glitches': () => this.pageGlitches(),
+      '/admin/access': () => this.pageAccess(),
+      '/admin/modules': () => this.pageModules()
+    };
+  }
+
+  // ========== PAGES ==========
+  pageLogin() {
+    return h('div', { style: { minHeight:'100vh', display:'flex', alignItems:'center', justifyContent:'center', background:'linear-gradient(135deg, #0F3B2E, #0A2A20)', color:'#fff', padding: 24 } },
+      h('div', { style: { background:'var(--cream)', color:'var(--charcoal)', width: 420, borderRadius: 12, padding: 40, boxShadow:'0 20px 60px rgba(0,0,0,.3)' } },
+        h('div', { style: { display:'flex', alignItems:'center', gap:10, marginBottom: 28 } },
+          h('div', { style: { width:22, height:22, borderRadius:'50%', background:'var(--gold)' } }),
+          h('div', { className:'frn', style: { fontSize: 22 } }, 'Halcyon Reach')
+        ),
+        h('h2', { className:'frn', style: { fontSize: 28, marginBottom: 6 } }, 'Sign in to the hub'),
+        h('div', { style: { color:'var(--stone)', marginBottom: 24, fontSize: 13 } }, 'Employee credentials only. Contact IT for access.'),
+        h('label', { style: { display:'block', fontSize:12, marginBottom:6, color:'var(--stone)' } }, 'Email'),
+        h('input', { defaultValue:'admin@halcyonreach.com', style:{ width:'100%', marginBottom:14 } }),
+        h('label', { style: { display:'block', fontSize:12, marginBottom:6, color:'var(--stone)' } }, 'Password'),
+        h('input', { type:'password', defaultValue:'············', style:{ width:'100%', marginBottom:20 } }),
+        h('button', { className:'new-btn gold', style: { width:'100%', padding:'12px' }, onClick: () => this.nav('/dashboard') }, 'Sign in'),
+        h('div', { style: { textAlign:'center', margin: '20px 0 16px', color:'var(--stone)', fontSize:12 } }, 'or'),
+        h('button', { className:'new-btn ghost', title:'Coming soon — requested Feb 2024', disabled:true, style: { width:'100%', padding:'12px', opacity:.5, cursor:'not-allowed' } }, 'Sign in with Google'),
+        h('div', { style: { marginTop: 20, fontSize: 11, color:'var(--stone)', textAlign:'center' } }, 'v2019.4-patched · WP core 5.8.11')
+      )
+    );
+  }
+
+  pageDashboard() {
+    const anns = [
+      { author:'Nida Aslam', when:'Today 09:12', text:'Ramadan timings begin next Tuesday. Iftar service in the canteen from 6:20 pm.' },
+      { author:'Nida Aslam', when:'Yesterday 16:04', text:'Reminder: Q1 town hall this Friday, 3 pm, Floor 3 boardroom.' },
+      { author:'Nida Aslam', when:'2 days ago', text:'Please welcome our new joiner — details on the People page.' }
+    ];
+    return h('div', null,
+      h(PageTitle, { title:'Good morning, Admin', sub:`${new Date().toLocaleDateString('en-GB',{weekday:'long', day:'2-digit', month:'long', year:'numeric'})} · Floor 3` }),
+      h('div', { style: { display:'grid', gridTemplateColumns:'1fr 340px', gap: 28 } },
+        // left
+        h('div', { style: { display:'flex', flexDirection:'column', gap: 20 } },
+          // announcements
+          h('div', { className:'new-card' },
+            h('div', { style: S.h2New }, 'Announcements'),
+            anns.map((a,i) => h('div', { key:i, style: { borderTop: i?'1px solid var(--border)':'0', paddingTop: i?14:0, paddingBottom: 14, marginBottom: i===anns.length-1?0:0 } },
+              h('div', { style: { fontSize: 12, color:'var(--stone)', marginBottom: 4 } }, a.author + ' · ' + a.when),
+              h('div', null, a.text)
+            ))
+          ),
+          // my day
+          h('div', { className:'new-card' },
+            h('div', { style: S.h2New }, 'My day'),
+            [
+              { time:'10:30', title:'Weekly leadership sync', where:'Boardroom · F3' },
+              { time:'12:00', title:'Nestlé Q4 brief walkthrough', where:'Iman Zafar + Zunaira Shaikh' },
+              { time:'15:15', title:'One-on-one with Sana Mahmood', where:'HR office · F1' }
+            ].map((m,i) => h('div', { key:i, style: { display:'flex', gap: 16, padding:'14px 0', borderBottom: i<2?'1px solid var(--border)':'0' } },
+              h('div', { style: { width: 60, color:'var(--evergreen)', fontWeight: 600 } }, m.time),
+              h('div', null,
+                h('div', { style: { fontWeight: 500 } }, m.title),
+                h('div', { style: { fontSize: 12, color:'var(--stone)', marginTop:2 } }, m.where)
+              )
+            ))
+          ),
+          // quick actions
+          h('div', { className:'new-card' },
+            h('div', { style: S.h2New }, 'Quick actions'),
+            h('div', { style: { display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap: 10 } },
+              [['Book a room','/rooms'],['Raise an IT ticket','/tickets/new'],['Submit expense','/expenses'],['Request leave','/hr/leave']].map(([l,p]) =>
+                h('button', { key:p, className:'new-btn ghost', onClick: () => this.nav(p), style: { padding:'14px 10px' } }, l)
+              )
+            )
+          )
+        ),
+        // right
+        h('div', { style: { display:'flex', flexDirection:'column', gap: 16 } },
+          h('div', { className:'old-card' },
+            h('div', { style: S.oldTitle }, 'BUILDING STATUS'),
+            h('table', { className:'old-table', style:{marginTop:6} },
+              h('tbody', null,
+                h('tr', null, h('td', null, 'Generator'), h('td', null, h('span', { style:{color:'#0a6f2c'}}, '● On grid'))),
+                h('tr', null, h('td', null, 'Water tanker'), h('td', null, 'Last filled 2 days ago')),
+                h('tr', null, h('td', null, 'Tea trolley'), h('td', null, 'Next round 3:15 pm')),
+                h('tr', null, h('td', null, 'Janitor pay'), h('td', null, 'Due in 4 days'))
+              )
+            ),
+            h('div', { style: { display:'flex', alignItems:'center', gap:8, marginTop:8, padding:'6px 4px 0', borderTop:'1px dashed #bbb' } },
+              h('div', { style: { width:26, height:26, borderRadius:'50%', background:'#bab29a', color:'#000', fontSize:10, display:'flex', alignItems:'center', justifyContent:'center', fontWeight:'bold' } }, 'BA'),
+              h('div', { style: { fontSize: 11 } }, 'Bilal Ahmed · Last updated 08:12')
+            )
+          ),
+          h('div', { className:'new-card' },
+            h('div', { style: { fontSize: 12, color:'var(--stone)', marginBottom: 8 } }, 'VACANT SEATS'),
+            h('div', { style: { fontSize: 20, fontWeight:600, marginBottom: 4 } }, '4 seats currently unassigned'),
+            h('div', { style: { fontSize: 12, color:'var(--stone)', marginBottom: 14 } }, 'R4, H4, H6, T3'),
+            h('a', { onClick: () => this.nav('/directory'), style: { cursor:'pointer' } }, 'See directory →')
+          ),
+          h('div', { style: { background:'var(--evergreen)', color:'#fff', padding: 18, borderRadius: 10 } },
+            h('div', { style: { fontSize: 11, opacity:.7, marginBottom: 6, letterSpacing:'.08em' } }, "YOU'RE LOGGED IN AS"),
+            h('div', { style: { fontSize: 18, fontWeight: 500, marginBottom: 4 } }, 'Admin (You)'),
+            h('div', { style: { fontSize: 12, opacity:.8 } }, 'Role: '), h(Badge, { color:'amber' }, 'superadmin')
+          )
+        )
+      )
+    );
+  }
+
+  pageVisitorLog() {
+    const view = this.state.view.vlView || 'log';
+    const all = [...this.state.visitorsExtra, ...VISITORS_SEED];
+    const status = this.state.view.vlStatus || 'all';
+    const hostF = (this.state.view.vlHost || '').toLowerCase();
+    const filtered = all.filter(v =>
+      (status === 'all' || v.status.startsWith(status)) &&
+      (!hostF || (v.hostName||'').toLowerCase().includes(hostF))
+    );
+    const modal = this.state.modal;
+    return h('div', null,
+      h('div', { style: { display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom: 20 } },
+        h('div', null,
+          h('h1', { className:'frn', style: S.pageTitle }, 'Visitor Log'),
+          h('div', { style: S.pageSub }, 'Reception · Floor 1 · runs on the sign-in tablet (WP module v3.1)')
+        ),
+        h('div', { style: { display:'flex', gap:8 } },
+          h('button', { className: view==='tablet'?'old-btn gold':'old-btn', onClick: () => this.setView({vlView:'tablet'}) }, 'Live tablet view'),
+          h('button', { className: view==='log'?'old-btn gold':'old-btn', onClick: () => this.setView({vlView:'log'}) }, 'Log view')
+        )
+      ),
+      view === 'tablet' ? this.visitorTablet(all) : this.visitorLogTable(filtered),
+      h('div', { style: { marginTop: 12, fontSize: 12 } },
+        h('a', { onClick: () => this.openModal('paperlog'), style: {cursor:'pointer'} }, '📓 Show paper log (Ayesha\'s green notebook)')
+      ),
+      modal === 'paperlog' ? this.paperLogModal() : null
+    );
+  }
+
+  visitorTablet(all) {
+    const todayList = all.filter(v => v.date.toDateString() === today().toDateString()).slice(0, 12);
+    const [name, setName] = [this.state.view.vName||'', v => this.setView({vName:v})];
+    const [phone, setPhone] = [this.state.view.vPhone||'+92 3', v => this.setView({vPhone:v})];
+    const [host, setHost] = [this.state.view.vHost2||'', v => this.setView({vHost2:v})];
+    const [purpose, setPurpose] = [this.state.view.vPurpose||'', v => this.setView({vPurpose:v})];
+    const hosts = NAMED_HOSTS.filter(p => !host || p.name.toLowerCase().includes(host.toLowerCase())).slice(0, 5);
+    const submit = () => {
+      if (!name || !host) return;
+      const selHost = findByName(host) || hosts[0];
+      this.addVisitor({ name, phone, hostId: selHost.id, hostName: selHost.name, purpose });
+      this.setView({vName:'', vPhone:'+92 3', vHost2:'', vPurpose:''});
+    };
+    return h('div', { style: { display:'grid', gridTemplateColumns:'1fr 340px', gap: 20 } },
+      h('div', { className:'old-card', style: { padding: 20, background:'#f5f2e8' } },
+        h('div', { style: { ...S.oldTitle, fontSize:15, padding:'8px 12px' } }, 'VISITOR SIGN-IN — RECEPTION'),
+        h('div', { style: { marginTop: 16, display:'grid', gap: 14 } },
+          h('div', null,
+            h('label', {style:{fontSize:12,fontWeight:'bold'}}, 'Visitor name'),
+            h('input', { value: name, onChange: e=>setName(e.target.value), style:{width:'100%', marginTop:4, padding:10} })
+          ),
+          h('div', null,
+            h('label', {style:{fontSize:12,fontWeight:'bold'}}, 'Phone (Pakistan)'),
+            h('input', { value: phone, onChange: e=>setPhone(e.target.value), style:{width:'100%', marginTop:4, padding:10} })
+          ),
+          h('div', null,
+            h('label', {style:{fontSize:12,fontWeight:'bold'}}, 'Host (start typing…)'),
+            h('input', { value: host, onChange: e=>setHost(e.target.value), style:{width:'100%', marginTop:4, padding:10} }),
+            host ? h('div', { style: { background:'#fff', border:'1px solid #999', maxHeight:120, overflow:'auto' } }, hosts.map(p => h('div', { key:p.id, onClick: ()=>setHost(p.name), style: { padding:'4px 8px', cursor:'pointer', fontSize:12, borderBottom:'1px solid #eee' } }, p.name + ' — ' + p.role))) : null
+          ),
+          h('div', null,
+            h('label', {style:{fontSize:12,fontWeight:'bold'}}, 'Purpose'),
+            h('input', { value: purpose, onChange: e=>setPurpose(e.target.value), style:{width:'100%', marginTop:4, padding:10} })
+          ),
+          h('div', null,
+            h('label', {style:{fontSize:12,fontWeight:'bold'}}, 'Photo'),
+            h('div', { style: { border:'1px dashed #888', padding:20, background:'#000', color:'#999', textAlign:'center', fontSize:12 } }, '[ Tap to capture ]')
+          ),
+          h('button', { onClick: submit, style: { padding:'14px', background:'var(--gold)', border:'1px solid #7a5b1e', color:'#000', fontWeight:'bold', fontSize:16, boxShadow:'3px 3px 6px rgba(0,0,0,.4)', cursor:'pointer' } }, 'SIGN IN')
+        )
+      ),
+      h('div', { className:'old-card' },
+        h('div', { style: S.oldTitle }, "TODAY'S VISITORS"),
+        h('div', { style: { maxHeight: 500, overflow:'auto', marginTop: 6 } },
+          todayList.length ? todayList.map(v => h('div', { key:v.id, style: { padding:'6px 4px', borderBottom:'1px dashed #ccc', fontSize:11 } },
+            h('div', { style:{fontWeight:'bold'} }, v.timeIn + ' · ' + v.name),
+            h('div', {style:{color:'#555'}}, '→ ' + v.hostName + ' · ' + v.purpose),
+            v.status !== 'OK' ? h('div', null, h(Badge,{color: v.status.startsWith('FAILED')?'red':'amber'}, v.status)) : null
+          )) : h('div', {style:{padding:10, fontSize:11, color:'#777'}}, 'No visitors yet today.')
+        )
+      )
+    );
+  }
+
+  visitorLogTable(rows) {
+    return h('div', null,
+      h('div', { className:'old-card' },
+        h('div', { style: S.oldTitle }, 'FILTERS'),
+        h('div', { style: { display:'flex', gap: 10, alignItems:'center', marginTop: 8, fontSize:12 } },
+          h('label', null, 'Host: ', h('input', { placeholder:'name…', style:{padding:'2px 6px', fontSize:11}, onChange: e => this.setView({vlHost: e.target.value}) })),
+          h('label', null, 'Status: ',
+            h('select', { style:{padding:'2px 6px', fontSize:11}, onChange: e => this.setView({vlStatus: e.target.value}) },
+              h('option', {value:'all'}, 'All'),
+              h('option', {value:'OK'}, 'OK'),
+              h('option', {value:'FAILED'}, 'Failed to write'),
+              h('option', {value:'OVERRIDE'}, 'Override — Bilal')
+            )
+          ),
+          h('div', {style:{flex:1}}),
+          h('div', {style:{color:'#555'}}, rows.length + ' entries · last 30 days')
+        )
+      ),
+      h('div', { style:{ height:8 } }),
+      h('div', { className:'old-card', style:{ padding:0 } },
+        h('table', { className:'old-table' },
+          h('thead', null, h('tr', null,
+            ['Date','Time in','Name','Host','Purpose','Time out','Status'].map(c => h('th', {key:c}, c))
+          )),
+          h('tbody', null,
+            rows.slice(0, 200).map(v => h('tr', { key: v.id },
+              h('td', null, fmtNice(v.date)),
+              h('td', null, v.timeIn),
+              h('td', null, v.name),
+              h('td', null, v.hostName),
+              h('td', null, v.purpose),
+              h('td', null, v.timeOut || '—'),
+              h('td', null,
+                v.status === 'OK' ? h(Badge,{color:'grey'}, 'OK') :
+                v.status.startsWith('FAILED') ? h('span', null, h(Badge,{color:'red'}, 'FAILED TO WRITE'), h('span', {style:{marginLeft:4}}, '🖨')) :
+                h(Badge,{color:'amber'}, v.status)
+              )
+            ))
+          )
+        )
+      )
+    );
+  }
+
+  paperLogModal() {
+    const entries = [
+      { d: RECENT_TUE, t:'15:42', n:'M. Yousuf (photographer)', h:'F. Habib', note:'came up in service lift' },
+      { d: RECENT_TUE, t:'16:18', n:'"Zaki" (no card)', h:'F. Habib', note:'Bilal escorted' },
+      { d: subDays(RECENT_TUE,7), t:'15:08', n:'S. Ahmad', h:'F. Habib', note:'no phone given' },
+      { d: subDays(today(),3), t:'19:08', n:'2 men', h:'—', note:'B.A. said skip' },
+      { d: subDays(today(),11), t:'18:47', n:'1 man, black case', h:'—', note:'B.A. said skip' }
+    ];
+    return h('div', { className:'modal-overlay', onClick: this.closeModal },
+      h('div', { onClick: e=>e.stopPropagation(), style: { background:'#f4efd8', color:'#1a1a10', padding: 32, maxWidth: 620, borderRadius: 4, border:'1px solid #7a6a3f', boxShadow:'0 10px 40px rgba(0,0,0,.4)', fontFamily:'Courier New, monospace' } },
+        h('div', { style: { fontWeight:'bold', fontSize:18, borderBottom:'1px solid #7a6a3f', paddingBottom:8, marginBottom: 12 } }, "Ayesha's paper log — hand entries only"),
+        h('div', { style: { fontSize:12, marginBottom: 16, color:'#5a5a3f' } }, 'The one Bilal made her keep after the digital sign-in "went weird". Not in the database.'),
+        h('div', { style: { display:'grid', gap: 10 } },
+          entries.map((e,i) => h('div', { key:i, style: { borderBottom:'1px dashed #7a6a3f', paddingBottom:8, fontSize:13 } },
+            h('div', {style:{fontWeight:'bold'}}, fmtNice(e.d) + ' · ' + e.t + ' — ' + e.n),
+            h('div', null, '→ host: ' + e.h),
+            h('div', {style:{fontStyle:'italic'}}, '"' + e.note + '"')
+          ))
+        ),
+        h('button', { onClick: this.closeModal, className:'old-btn', style:{marginTop: 20} }, 'Close')
+      )
+    );
+  }
+
+  pageTablet() {
+    const [name, setName] = [this.state.view.tName||'', v => this.setView({tName:v})];
+    const [host, setHost] = [this.state.view.tHost||'', v => this.setView({tHost:v})];
+    return h('div', { style: { minHeight:'100vh', background:'var(--evergreen)', color:'#fff', display:'flex', flexDirection:'column', padding: 60 } },
+      h('div', { style: { position:'absolute', top:16, right:16 } },
+        h('button', { className:'new-btn ghost', style:{color:'#fff', borderColor:'rgba(255,255,255,.3)'}, onClick: () => this.nav('/visitor-log') }, 'Exit kiosk')
+      ),
+      h('div', { style: { textAlign:'center', marginBottom: 30 } },
+        h('div', { style: { display:'inline-flex', alignItems:'center', gap: 14 } },
+          h('div', { style: { width: 32, height: 32, borderRadius:'50%', background: 'var(--gold)' } }),
+          h('div', { className:'frn', style: { fontSize: 32 } }, 'Halcyon Reach')
+        )
+      ),
+      h('div', { style: { textAlign:'center', marginBottom: 40 } },
+        h('div', { className:'frn', style: { fontSize: 56, marginBottom: 10 } }, 'Welcome'),
+        h('div', { className:'urdu', style: { fontSize: 46, lineHeight: 1.6 } }, 'خوش آمدید')
+      ),
+      h('div', { style: { maxWidth: 640, margin:'0 auto', width:'100%', display:'grid', gap: 22 } },
+        h('div', null,
+          h('div', { style: { fontSize:20, marginBottom:6 } }, 'Your name'),
+          h('div', { className:'urdu', style: { fontSize: 20, color:'var(--gold-soft)', marginBottom: 8 } }, 'اپنا نام لکھیں'),
+          h('input', { value: name, onChange: e=>setName(e.target.value), style: { width:'100%', padding: 18, fontSize: 22, background:'rgba(255,255,255,.08)', color:'#fff', border:'1px solid rgba(255,255,255,.3)' } })
+        ),
+        h('div', null,
+          h('div', { style: { fontSize:20, marginBottom:6 } }, 'Who are you here to see?'),
+          h('div', { className:'urdu', style: { fontSize: 20, color:'var(--gold-soft)', marginBottom: 8 } }, 'ملاقات کس سے ہے؟'),
+          h('input', { value: host, onChange: e=>setHost(e.target.value), style: { width:'100%', padding: 18, fontSize: 22, background:'rgba(255,255,255,.08)', color:'#fff', border:'1px solid rgba(255,255,255,.3)' } })
+        ),
+        h('button', { className:'new-btn gold', style: { padding: '22px', fontSize: 22 }, onClick: () => { alert('Signed in. A lanyard sticker is printing.'); this.setView({tName:'', tHost:''}); } }, 'Sign in · سائن ان')
+      )
+    );
+  }
+
+  pageCouriers() {
+    const tab = this.state.view.crTab || 'inbound';
+    const rows = COURIERS_SEED.filter(c => c.direction === tab);
+    return h('div', null,
+      h(PageTitle, { title:'Couriers', sub:'Inbound and outbound. Hira Malik has been keeping paper annotations alongside.' }),
+      h('div', { style: { display:'flex', gap:0, marginBottom: 12 } },
+        ['inbound','outbound'].map(t => h('button', { key:t, className: tab===t?'old-btn gold':'old-btn', onClick: () => this.setView({crTab:t}), style: { borderRadius:0, textTransform:'capitalize' } }, t))
+      ),
+      h('div', { className:'old-card', style: { padding: 0 } },
+        h('table', { className:'old-table' },
+          h('thead', null, h('tr', null, ['Date','Time','Company','Waybill','Sender / Recipient','Handled by','Hira\'s note'].map(c => h('th', {key:c}, c)))),
+          h('tbody', null,
+            rows.map(r => h('tr', { key: r.id, style: r.flag ? { borderLeft:'4px solid #d4a437' } : {} },
+              h('td', { style: r.flag ? { borderLeft:'4px solid #d4a437' } : {} }, fmtNice(r.date)),
+              h('td', null, r.timeIn),
+              h('td', null, r.company),
+              h('td', { style:{fontFamily:'monospace'} }, r.waybill),
+              h('td', null, r.counterparty),
+              h('td', null, r.handledBy),
+              h('td', { style: r.flag ? { fontStyle:'italic', color:'#7a5b1e' } : {color:'#888'} }, r.note || '—')
+            ))
+          )
+        )
+      )
+    );
+  }
+
+  pageRooms() {
+    const rooms = [];
+    for (let f=1;f<=3;f++) for (let i=1;i<=4;i++) rooms.push({ id:`F${f}-R${i}`, floor:f, name: `Floor ${f} · Room ${i}`, cap: 4+i*2 });
+    const slots = ['09:00','10:00','11:00','12:00','13:00','14:00','15:00','16:00','17:00'];
+    return h('div', null,
+      h(PageTitle, { title:'Meeting rooms', sub:'12 rooms across 3 floors · today\'s bookings' }),
+      h('div', { className:'old-card', style:{padding:0} },
+        h('table', { className:'old-table' },
+          h('thead', null, h('tr', null, [h('th', {key:'r'}, 'Room'), h('th',{key:'c'},'Cap'), ...slots.map(s => h('th', {key:s}, s))])),
+          h('tbody', null,
+            rooms.map(r => h('tr', { key: r.id },
+              h('td', {style:{fontWeight:'bold'}}, r.name),
+              h('td', null, r.cap),
+              ...slots.map(s => {
+                const busy = (r.id.charCodeAt(4) + s.charCodeAt(1)) % 5 < 2;
+                return h('td', { key:s, style:{background: busy ? '#f4d4cf':'#dfeee2', color: busy?'#7a1e13':'#28502e', textAlign:'center', fontWeight:'bold'} }, busy?'BUSY':'free');
+              })
+            ))
+          )
+        )
+      )
+    );
+  }
+
+  pageFacilities() {
+    return h('div', null,
+      h(PageTitle, { title:'Facilities', sub:'Bilal Ahmed · Admin Coordinator · updated 08:12 today' }),
+      h('div', { style: { display:'grid', gridTemplateColumns:'repeat(2,1fr)', gap: 16 } },
+        h('div', { className:'old-card' },
+          h('div', { style: S.oldTitle }, 'POWER'),
+          h('table', {className:'old-table', style:{marginTop:6}}, h('tbody', null,
+            h('tr',null, h('td',null,'Grid'), h('td',null, h('b',{style:{color:'#0a6f2c'}}, '● ON'))),
+            h('tr',null, h('td',null,'Generator'), h('td',null,'Standby · fuel 84%')),
+            h('tr',null, h('td',null,'UPS floor 1'), h('td',null,'OK')),
+            h('tr',null, h('td',null,'UPS floor 3'), h('td',null,'Battery at 62% — replace by month-end'))
+          ))
+        ),
+        h('div', { className:'old-card' },
+          h('div', { style: S.oldTitle }, 'WATER'),
+          h('table', {className:'old-table', style:{marginTop:6}}, h('tbody', null,
+            h('tr',null, h('td',null,'Underground tank'), h('td',null,'2 days ago · Al-Karim')),
+            h('tr',null, h('td',null,'Overhead tank'), h('td',null,'Full')),
+            h('tr',null, h('td',null,'Filtered drinking'), h('td',null,'Replaced Fri'))
+          ))
+        ),
+        h('div', { className:'old-card' },
+          h('div', { style: S.oldTitle }, 'TEA TROLLEY SCHEDULE'),
+          h('table', {className:'old-table', style:{marginTop:6}}, h('tbody', null,
+            h('tr',null, h('td',null,'10:00 AM'), h('td',null,'All floors — chai + biscuit')),
+            h('tr',null, h('td',null,'12:30 PM'), h('td',null,'Floor 3 only — coffee')),
+            h('tr',null, h('td',null,'3:15 PM'), h('td',null,'All floors — chai + samosa Fri')),
+            h('tr',null, h('td',null,'5:30 PM'), h('td',null,'Floor 2 (creative) — kahwa'))
+          ))
+        ),
+        h('div', { className:'old-card' },
+          h('div', { style: S.oldTitle }, 'JANITOR PAY DATES'),
+          h('table', {className:'old-table', style:{marginTop:6}}, h('tbody', null,
+            h('tr',null, h('td',null,'Rashid (day shift)'), h('td',null,'28th · advance 15th if asked')),
+            h('tr',null, h('td',null,'Jameel (day shift)'), h('td',null,'28th')),
+            h('tr',null, h('td',null,'Anwar (night)'), h('td',null,'28th')),
+            h('tr',null, h('td',null,'Kausar Bibi (kitchen)'), h('td',null,'28th'))
+          ))
+        )
+      )
+    );
+  }
+
+  pageDirectory() {
+    const q = (this.state.view.dirQ || '').toLowerCase();
+    const floor = this.state.view.dirFloor || 'all';
+    const dept = this.state.view.dirDept || 'all';
+    let list = PEOPLE.filter(p =>
+      (floor==='all' || p.floor === +floor) &&
+      (dept==='all' || p.department === dept) &&
+      (!q || (p.name||'').toLowerCase().includes(q) || (p.role||'').toLowerCase().includes(q) || p.id.toLowerCase().includes(q))
+    );
+    const depts = Array.from(new Set(PEOPLE.map(p=>p.department))).filter(Boolean).sort();
+    return h('div', null,
+      h(PageTitle, { title:'Directory', sub: PEOPLE.filter(p=>!p.vacant).length + ' people · ' + PEOPLE.filter(p=>p.vacant).length + ' vacant seats' }),
+      h('div', { className:'new-card', style:{marginBottom:20} },
+        h('div', { style: { display:'flex', gap: 12, flexWrap:'wrap' } },
+          h('input', { placeholder:'Search name, role, or seat code…', style: { flex:1, minWidth:220 }, onChange: e => this.setView({dirQ: e.target.value}) }),
+          h('select', { onChange: e => this.setView({dirFloor: e.target.value}) },
+            h('option', {value:'all'}, 'All floors'),
+            h('option', {value:'1'}, 'Floor 1'),
+            h('option', {value:'2'}, 'Floor 2'),
+            h('option', {value:'3'}, 'Floor 3')
+          ),
+          h('select', { onChange: e => this.setView({dirDept: e.target.value}) },
+            h('option', {value:'all'}, 'All departments'),
+            depts.map(d => h('option', {key:d, value:d}, d))
+          )
+        )
+      ),
+      h('div', { style: { display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(260px,1fr))', gap: 14 } },
+        list.map(p => p.vacant ?
+          h('div', { key: p.id, className:'new-card', style: { padding: 16, background:'#f0eee2', border:'1px dashed #b8b5a1', textAlign:'center' } },
+            h('div', { style: { width:44, height:44, borderRadius:'50%', background:'#dfdcc9', margin:'0 auto 8px', display:'flex', alignItems:'center', justifyContent:'center', color:'#8a8a7a', fontSize:11 } }, 'vacant'),
+            h('div', { style: { fontWeight:500 } }, 'Vacant — seat ' + p.id),
+            h('div', { style: { fontSize: 12, color:'var(--stone)', marginTop:2 } }, p.department + ' · Floor ' + p.floor)
+          ) :
+          h('div', { key: p.id, className:'new-card', style: { padding: 16, cursor:'pointer' }, onClick: () => this.nav('/directory/'+p.id) },
+            h('div', { style: { display:'flex', gap: 12, alignItems:'center' } },
+              h(Avatar, { p, size: 44 }),
+              h('div', { style: { minWidth: 0 } },
+                h('div', { style: { fontWeight:500 } }, p.name),
+                h('div', { style: { fontSize: 12, color:'var(--stone)' } }, p.role),
+                h('div', { style: { fontSize: 11, color:'var(--stone)', marginTop:2 } }, p.id + ' · F' + p.floor + ' · ext ' + p.extension)
+              )
+            )
+          )
+        )
+      )
+    );
+  }
+
+  pageDirectoryProfile(id) {
+    const p = findPerson(id);
+    if (!p || p.vacant) return h('div', null, h(PageTitle, { title:'Not found' }), h('a', { onClick: ()=>this.nav('/directory'), style:{cursor:'pointer'}}, '← Back to directory'));
+    const mgr = p.managerId ? findPerson(p.managerId) : null;
+    const reports = PEOPLE.filter(x => x.managerId === p.id && !x.vacant);
+    return h('div', null,
+      h('a', { onClick: ()=>this.nav('/directory'), style:{cursor:'pointer', fontSize:12} }, '← Directory'),
+      h('div', { className:'new-card', style: { marginTop: 12, display:'grid', gridTemplateColumns:'auto 1fr', gap: 24, padding: 32 } },
+        h(Avatar, { p, size: 96 }),
+        h('div', null,
+          h('div', { style: { fontSize:12, color:'var(--stone)' } }, p.id + ' · Floor ' + p.floor + ' · ' + p.department),
+          h('h1', { className:'frn', style: { fontSize: 30 } }, p.name),
+          h('div', { style: { color:'var(--stone)', marginBottom: 20 } }, p.role),
+          h('div', { style: { display:'grid', gridTemplateColumns:'repeat(2,1fr)', gap: 12, fontSize: 13 } },
+            h('div', null, h('div',{style:{fontSize:11,color:'var(--stone)'}}, 'EMAIL'), p.email),
+            h('div', null, h('div',{style:{fontSize:11,color:'var(--stone)'}}, 'EXTENSION'), p.extension),
+            h('div', null, h('div',{style:{fontSize:11,color:'var(--stone)'}}, 'AGE'), p.age),
+            h('div', null, h('div',{style:{fontSize:11,color:'var(--stone)'}}, 'REPORTS TO'),
+              mgr ? h('a', {onClick:()=>this.nav('/directory/'+mgr.id), style:{cursor:'pointer'}}, mgr.name) : '—')
+          )
+        )
+      ),
+      reports.length ? h('div', { className:'new-card', style: { marginTop: 16 } },
+        h('div', { style: S.h2New }, 'Direct reports (' + reports.length + ')'),
+        h('div', { style: { display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(220px,1fr))', gap: 10 } },
+          reports.map(r => h('div', { key: r.id, style: { display:'flex', gap: 10, alignItems:'center', padding: 10, border:'1px solid var(--border)', borderRadius:8, cursor:'pointer' }, onClick: ()=>this.nav('/directory/'+r.id) },
+            h(Avatar, { p: r, size: 32 }),
+            h('div', null,
+              h('div', {style:{fontSize:13,fontWeight:500}}, r.name),
+              h('div', {style:{fontSize:11,color:'var(--stone)'}}, r.role)
+            )
+          ))
+        )
+      ) : null
+    );
+  }
+
+  pageOrgChart() {
+    // build tree from E1
+    const roots = PEOPLE.filter(p => !p.vacant && !p.managerId);
+    const kids = (id) => PEOPLE.filter(p => p.managerId === id && !p.vacant);
+    const node = (p, depth) => h('div', { key: p.id, style: { marginLeft: depth * 24, padding: '4px 0' } },
+      h('div', { style: { display:'flex', gap: 8, alignItems:'center', cursor:'pointer' }, onClick: () => this.nav('/directory/'+p.id) },
+        h(Avatar, { p, size: 26 }),
+        h('div', null,
+          h('span', { style: { fontWeight:500 } }, p.name),
+          h('span', { style: { color:'var(--stone)', fontSize:12, marginLeft:8 } }, p.role)
+        )
+      ),
+      kids(p.id).map(c => node(c, depth+1))
+    );
+    return h('div', null,
+      h(PageTitle, { title:'Org chart', sub:'From the founders down.' }),
+      h('div', { className:'new-card', style: { padding: 24, maxHeight: 720, overflow:'auto' } },
+        roots.map(r => node(r, 0))
+      )
+    );
+  }
+
+  pageExecCalendar() {
+    const showDetail = this.state.view.calDetail !== false;
+    const revealGaps = this.state.view.revealGaps;
+    const execs = PEOPLE.filter(p => p.department === 'Executive' && !p.vacant);
+    const slots = ['09:00','10:00','11:00','12:00','13:00','14:00','15:00','16:00','17:00'];
+    // build fake schedule
+    const status = (e, i) => {
+      if (e.id === 'E2' && new Date().getDay() === 5 && (i>=2 && i<=4)) return showDetail && revealGaps ? {t:'Not in office', c:'#f4d4cf', cl:'#7a1e13'} : {t:'In meeting', c:'#dfeee2', cl:'#28502e'};
+      const seed = (e.id.charCodeAt(1) + i) % 4;
+      if (seed === 0) return {t:'Out', c:'#f0eee2', cl:'#7a7a68'};
+      if (seed === 1) return {t: showDetail ? 'Client — Nestlé' : 'In meeting', c:'#dfeee2', cl:'#28502e'};
+      if (seed === 2) return {t: showDetail ? 'Deep work' : 'In office', c:'#e4dbee', cl:'#4a3a70'};
+      return {t: showDetail ? 'Free' : 'In office', c:'#fff', cl:'#555'};
+    };
+    return h('div', null,
+      h(PageTitle, { title:'Executive calendar', sub:'Semi-public. Junior view shows only availability.' }),
+      h('div', { className:'new-card', style: { marginBottom: 16, display:'flex', gap: 20, alignItems:'center' } },
+        h('label', null, h('input', { type:'checkbox', checked: showDetail, onChange: e => this.setView({calDetail: e.target.checked}) }), ' Admin view (show detail)'),
+        showDetail ? h('label', null, h('input', { type:'checkbox', checked: !!revealGaps, onChange: e => this.setView({revealGaps: e.target.checked}) }), ' Reveal Friday gaps') : null
+      ),
+      h('div', { className:'new-card', style:{padding:0, overflow:'auto'} },
+        h('table', { className:'new-table' },
+          h('thead', null, h('tr', null, h('th', null, 'Executive'), ...slots.map(s => h('th', {key:s}, s)))),
+          h('tbody', null,
+            execs.map(e => h('tr', { key: e.id },
+              h('td', null,
+                h('div', {style:{fontWeight:500}}, e.name),
+                h('div', {style:{fontSize:11,color:'var(--stone)'}}, e.role)
+              ),
+              ...slots.map((s,i) => {
+                const st = status(e, i);
+                return h('td', { key:s, style: { background: st.c, color: st.cl, fontSize: 12 } }, st.t);
+              })
+            ))
+          )
+        )
+      )
+    );
+  }
+
+  pageJobPostings() {
+    return h('div', null,
+      h(PageTitle, { title:'Internal job postings', sub:'Roles open across the agency this month.' }),
+      h('div', { className:'new-card', style: { marginBottom: 20 } },
+        h('div', { style: { fontSize: 12, color:'var(--stone)', marginBottom: 8 } }, 'PR & Communications hiring — last 12 months'),
+        h('div', { style: { display:'flex', alignItems:'end', gap: 4, height: 60 } },
+          Array(12).fill(0).map((_,i) => h('div', { key:i, style: { flex:1, background:'#e4e2d7', height: 2 } }))
+        ),
+        h('div', { style: { display:'flex', justifyContent:'space-between', fontSize: 10, color:'var(--stone)', marginTop: 4 } },
+          ['12mo ago','9mo','6mo','3mo','now'].map((l,i) => h('span', {key:i}, l))
+        )
+      ),
+      h('div', { style: { display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(300px,1fr))', gap: 16 } },
+        JOBS.map(j => h('div', { key:j.id, className:'new-card' },
+          h('div', { style: { fontSize: 11, color:'var(--stone)', textTransform:'uppercase', letterSpacing:'.06em' } }, j.dept + ' · Floor ' + j.floor),
+          h('div', { className:'frn', style: { fontSize: 20, margin:'8px 0 12px' } }, j.title),
+          h('div', { style: { fontSize: 12, color:'var(--stone)', marginBottom: 20 } }, 'Posted ' + Math.floor((today() - j.posted)/86400000) + 'd ago · closes in ' + j.closes + 'd'),
+          h('button', { className:'new-btn', onClick: () => this.openModal('apply:'+j.id) }, 'Apply')
+        ))
+      ),
+      this.state.modal && this.state.modal.startsWith('apply:') ? h('div', { className:'modal-overlay', onClick: this.closeModal },
+        h('div', { className:'new-card', style: { maxWidth: 460 }, onClick: e=>e.stopPropagation() },
+          h('div', { style: S.h2New }, 'Application received'),
+          h('div', null, 'HR will be in touch.'),
+          h('button', { className:'new-btn', style:{marginTop:16}, onClick: this.closeModal }, 'OK')
+        )
+      ) : null
+    );
+  }
+
+  pageLeave() {
+    return h('div', null,
+      h(PageTitle, { title:'Leave', sub:'Request leave and review your history.' }),
+      h('div', { style: { display:'grid', gridTemplateColumns:'340px 1fr', gap: 20 } },
+        h('div', { className:'new-card' },
+          h('div', { style: S.h2New }, 'Request leave'),
+          h('label', {style:{fontSize:12,color:'var(--stone)'}}, 'Type'),
+          h('select', {style:{width:'100%', marginBottom:12}}, ['Annual','Casual','Sick','Bereavement','Hajj / Umrah'].map(x=>h('option',{key:x},x))),
+          h('label', {style:{fontSize:12,color:'var(--stone)'}}, 'From'),
+          h('input', {type:'date', style:{width:'100%', marginBottom:12}}),
+          h('label', {style:{fontSize:12,color:'var(--stone)'}}, 'To'),
+          h('input', {type:'date', style:{width:'100%', marginBottom:12}}),
+          h('label', {style:{fontSize:12,color:'var(--stone)'}}, 'Reason (optional)'),
+          h('textarea', {rows:3, style:{width:'100%', marginBottom:16}}),
+          h('button', { className:'new-btn' }, 'Submit')
+        ),
+        h('div', { className:'new-card' },
+          h('div', { style: S.h2New }, 'History'),
+          h('table', { className:'new-table' },
+            h('thead',null, h('tr',null, ['Type','From','To','Status'].map(c=>h('th',{key:c},c)))),
+            h('tbody', null,
+              [
+                ['Annual','12 Aug','15 Aug','Approved'],
+                ['Casual','2 Jun','2 Jun','Approved'],
+                ['Sick','8 May','9 May','Approved'],
+                ['Annual','24 Mar','28 Mar','Approved']
+              ].map((r,i) => h('tr',{key:i}, r.map((c,j) => h('td',{key:j}, j===3 ? h(Badge,{color:'green'}, c) : c))))
+            )
+          )
+        )
+      )
+    );
+  }
+
+  pagePayslips() {
+    const months = ['Sep','Aug','Jul','Jun','May','Apr','Mar','Feb','Jan'].map((m,i) => ({ m, y: 2026, gross: 'PKR ' + (450000-i*2500).toLocaleString() }));
+    return h('div', null,
+      h(PageTitle, { title:'Payslips', sub:'Monthly · downloadable as PDF' }),
+      h('div', { className:'new-card', style:{padding:0} },
+        h('table', {className:'new-table'},
+          h('thead',null, h('tr',null, ['Month','Gross','Net','Download'].map(c=>h('th',{key:c},c)))),
+          h('tbody', null, months.map((m,i) => h('tr',{key:i},
+            h('td', null, m.m + ' ' + m.y),
+            h('td', null, m.gross),
+            h('td', null, 'PKR ' + (parseInt(m.gross.replace(/[^\d]/g,''))*0.72).toLocaleString()),
+            h('td', null, h('a', {onClick:()=>alert('Downloading PDF…'), style:{cursor:'pointer'}}, '📄 PDF'))
+          )))
+        )
+      )
+    );
+  }
+
+  pageSurvey() {
+    const [reveal, setReveal] = [this.state.view.surveyReveal, v => this.setView({surveyReveal: v})];
+    const qs = [
+      'I feel valued at Halcyon Reach.',
+      'My manager gives me useful feedback.',
+      'I can raise concerns without fear.',
+      'The workload is sustainable.',
+      'I see myself here in two years.'
+    ];
+    return h('div', null,
+      h(PageTitle, { title:'Engagement survey — Q1', sub:'Takes 5 minutes.' }),
+      h('div', { className:'new-card' },
+        qs.map((q,i) => h('div', {key:i, style:{padding:'14px 0', borderBottom: i<qs.length-1?'1px solid var(--border)':'0'}},
+          h('div', {style:{marginBottom:8}}, q),
+          h('div', {style:{display:'flex', gap:8}}, [1,2,3,4,5].map(n => h('button', {key:n, className:'new-btn ghost', style:{padding:'6px 14px'}}, n)))
+        )),
+        h('div', {style:{marginTop:20, fontSize:11, color:'var(--stone)', fontStyle:'italic'}}, '* Responses are aggregated. Individual responses are not viewed by managers.')
+      ),
+      h('div', { className:'new-card', style:{marginTop: 16, background:'#f4efd8', border:'1px solid #b8a76b'} },
+        h('div', {style:{fontSize:12, color:'var(--stone)', marginBottom:6}}, 'ADMIN VIEW'),
+        h('button', { className:'new-btn', onClick: () => setReveal(!reveal) }, reveal ? 'Hide' : 'View raw responses (HR head only)'),
+        reveal ? h('div', {style:{marginTop:16, fontSize:12}},
+          h('div', {style:{fontFamily:'monospace', whiteSpace:'pre', background:'#fff', padding:12, borderRadius:6}},
+            '#0043 · A18 Alina Perwaiz     · 2,3,1,2,2\n' +
+            '#0044 · W9  Areesha Afzal      · 4,4,2,3,4\n' +
+            '#0045 · C25 Rimsha Tanveer     · 3,3,2,2,3\n' +
+            '#0046 · V3  Neha Younus        · 3,4,1,2,3\n' +
+            '#0047 · C22 Areeba Jamil       · 2,3,1,1,2\n' +
+            '#0048 · [ANON identified via IP: E2] · 5,5,5,5,5\n' +
+            '… 84 responses total. Below-3 clusters in Creative (C) and Video (V).'
+          )
+        ) : null
+      )
+    );
+  }
+
+  pagePolicies() {
+    return h('div', null,
+      h(PageTitle, { title:'Policies', sub:'Latest versions. If in doubt, ask HR.' }),
+      h('div', { className:'new-card', style: { padding: 0 } },
+        h('table', { className:'new-table' },
+          h('tbody', null,
+            [
+              ['Leave & absence','v4.2','Sana Mahmood','2 mo ago'],
+              ['Anti-harassment','v6.0','Sana Mahmood','4 mo ago'],
+              ['IT & data usage','v3.1','Usman Raza','9 mo ago'],
+              ['Expense limits','v2.4','Adnan Baig','1 mo ago'],
+              ['Remote work','v1.3','Rukhsana Zaman','7 mo ago'],
+              ['Whistleblower','v1.0','Sana Mahmood','2 yr ago']
+            ].map((r,i) => h('tr',{key:i}, r.map((c,j) => h('td',{key:j}, j===0 ? h('a', {style:{cursor:'pointer'}}, '📄 ' + c) : c))))
+          )
+        )
+      )
+    );
+  }
+
+  pageOnboarding() {
+    const steps = [
+      ['NIC & bank details','HR','done'],
+      ['Photo for directory','Reception','done'],
+      ['Laptop provisioning','IT','done'],
+      ['Email + calendar setup','IT','in progress'],
+      ['Payroll registration','Finance','in progress'],
+      ['Culture deck','HR','todo'],
+      ['Buddy assigned','HR','todo'],
+      ['30-day check-in','Manager','scheduled']
+    ];
+    return h('div', null,
+      h(PageTitle, { title:'Onboarding checklist', sub:'For our newest joiner. Owner: Nida Aslam.' }),
+      h('div', { className:'new-card', style: { padding: 0 } },
+        h('table', { className:'new-table' },
+          h('thead', null, h('tr',null, ['Step','Owner','Status'].map(c=>h('th',{key:c},c)))),
+          h('tbody', null,
+            steps.map((r,i) => h('tr',{key:i},
+              h('td', null, r[0]),
+              h('td', null, r[1]),
+              h('td', null, h(Badge, { color: r[2]==='done'?'green':r[2]==='todo'?'grey':'amber' }, r[2].toUpperCase()))
+            ))
+          )
+        )
+      )
+    );
+  }
+
+  pageExpenses() {
+    const rows = [
+      { d: subDays(today(),1), by:'Iman Zafar (C1)', amt:'PKR 4,200', cat:'Client meal', chain:'C14 → E4 → E5', status:'Pending' },
+      { d: subDays(today(),2), by:'Shehryar Farid (A7)', amt:'PKR 18,600', cat:'Client travel', chain:'E6 → E5', status:'Approved' },
+      { d: subDays(today(),3), by:'Saad Anwar (V1)', amt:'PKR 42,000', cat:'Shoot props', chain:'E2 → E5', status:'Approved' },
+      { d: subDays(today(),4), by:'Zunaira Shaikh (A1)', amt:'PKR 6,500', cat:'Cab fare (late night)', chain:'E6', status:'Approved' },
+      { d: subDays(today(),6), by:'Faraz Habib (E2)', amt:'PKR 27,000', cat:'Client dinner — Nestlé', chain:'E1', status:'Approved' },
+      { d: subDays(today(),8), by:'Mehreen Bukhari (W1)', amt:'PKR 3,100', cat:'Editorial subscription', chain:'E2', status:'Pending' },
+    ];
+    return h('div', null,
+      h(PageTitle, { title:'Expenses', sub:'Claims and approval chain.' }),
+      h('div', { className:'old-card', style:{padding:0} },
+        h('table',{className:'old-table'},
+          h('thead',null, h('tr',null, ['Date','Submitted by','Amount','Category','Chain','Status'].map(c=>h('th',{key:c},c)))),
+          h('tbody',null, rows.map((r,i) => h('tr',{key:i},
+            h('td',null, fmtNice(r.d)),
+            h('td',null, r.by), h('td',null, r.amt), h('td',null, r.cat),
+            h('td',{style:{fontFamily:'monospace'}}, r.chain),
+            h('td',null, h(Badge, { color: r.status==='Approved'?'green':'amber' }, r.status.toUpperCase()))
+          )))
+        )
+      )
+    );
+  }
+
+  pageInvoices() {
+    const rows = [
+      { d: subDays(today(),1), v:'Studio Rentals Pvt Ltd', ref:'INV-4421', amt:'PKR 380,000', due: '15 days', s:'Pending' },
+      { d: subDays(today(),3), v:'Meridian Express', ref:'MRE-8811', amt:'PKR 42,500', due: '7 days', s:'Pending' },
+      { d: subDays(today(),3), v:'DHA Print House', ref:'DPH-2201', amt:'PKR 96,000', due: '10 days', s:'Approved' },
+      { d: subDays(today(),8), v:'Nestlé — media reimbursement', ref:'REI-5501', amt:'PKR 1,240,000', due: '—', s:'Received' },
+      { d: subDays(today(),12), v:'Freelancer — Neha (motion)', ref:'FL-1109', amt:'PKR 65,000', due: 'overdue', s:'Overdue' }
+    ];
+    return h('div', null,
+      h(PageTitle, { title:'Vendor invoices', sub:'Owned by Imran Chaudhry (F3).' }),
+      h('div', { className:'old-card', style: { padding: 0 } },
+        h('table', { className:'old-table' },
+          h('thead', null, h('tr',null, ['Date','Vendor','Ref','Amount','Due','Status'].map(c=>h('th',{key:c},c)))),
+          h('tbody', null, rows.map((r,i) => h('tr',{key:i},
+            h('td',null,fmtNice(r.d)), h('td',null,r.v), h('td',{style:{fontFamily:'monospace'}}, r.ref), h('td',null,r.amt), h('td',null,r.due),
+            h('td',null, h(Badge, { color: r.s==='Approved'||r.s==='Received'?'green':r.s==='Overdue'?'red':'amber' }, r.s.toUpperCase()))
+          )))
+        )
+      )
+    );
+  }
+
+  pageMonthEnd() {
+    const items = [
+      ['Day 1','Close revenue journals','Farah Siddiqui','done'],
+      ['Day 1','Freeze timesheets','Waleed Akram','done'],
+      ['Day 2','AP reconciliation','Imran Chaudhry','done'],
+      ['Day 2','Client GL sweep','Farah Siddiqui','done'],
+      ['Day 3','Payroll run','Waleed Akram','in progress'],
+      ['Day 3','Tax withholding','Sadia Rehman','in progress'],
+      ['Day 4','Management P&L','Adnan Baig','todo'],
+      ['Day 4','Client margins pack','Adnan Baig','todo'],
+      ['Day 5','Board pack','Adnan Baig → E5','scheduled']
+    ];
+    return h('div', null,
+      h(PageTitle, { title:'Month-end close', sub:'Adnan\'s checklist. Days 1–5. No exceptions.' }),
+      h('div', { className:'old-card', style: { padding: 0 } },
+        h('table',{className:'old-table'},
+          h('thead',null,h('tr',null,['Day','Task','Owner','Status'].map(c=>h('th',{key:c},c)))),
+          h('tbody',null, items.map((r,i)=>h('tr',{key:i},
+            h('td',{style:{fontWeight:'bold'}}, r[0]), h('td',null,r[1]), h('td',null,r[2]),
+            h('td',null, h(Badge,{color: r[3]==='done'?'green':r[3]==='todo'?'grey':'amber'}, r[3].toUpperCase()))
+          )))
+        )
+      )
+    );
+  }
+
+  pageTickets() {
+    const rows = [...this.state.ticketsExtra, ...TICKETS_SEED];
+    return h('div', null,
+      h('div', { style: { display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom: 20 } },
+        h('div', null,
+          h('h1', { className:'frn', style: S.pageTitle }, 'IT Help Desk'),
+          h('div', { style: S.pageSub }, 'Ticket queue · owned by Usman Raza · module: OS-Ticket 1.9 (PHP)')
+        ),
+        h('div', { style: { display:'flex', gap:8 } },
+          h('button', { className:'old-btn', onClick: () => this.openModal('faisal') }, "📓 Faisal's paper log"),
+          h('button', { className:'old-btn gold', onClick: () => this.nav('/tickets/new') }, '+ New ticket')
+        )
+      ),
+      h('div', { className:'old-card', style:{padding:0} },
+        h('table',{className:'old-table'},
+          h('thead',null,h('tr',null,['Ticket #','Raised by','Subject','Priority','Assigned to','Status','Closed by'].map(c=>h('th',{key:c},c)))),
+          h('tbody',null, rows.slice(0,80).map((t,i) => h('tr',{key:t.id, style: t.anomaly?{background:'#fef6ec'}:{} },
+            h('td',{style:{fontFamily:'monospace'}}, t.id),
+            h('td',null, t.raisedBy + (t.raiserFloor===3?' · F3':'')),
+            h('td',null, t.subject),
+            h('td',null, h(Badge, { color: t.priority==='High'?'red':t.priority==='Med'?'amber':'grey' }, t.priority)),
+            h('td',null, t.assignedTo),
+            h('td',null, h(Badge, { color: t.status==='Closed'?'green':t.status==='Open'?'amber':'grey' }, t.status.toUpperCase())),
+            h('td',null, t.status==='Closed' ? (t.closedBy || h('span',{style:{color:'#a03a2e', fontWeight:'bold'}}, '(blank)')) : '—')
+          )))
+        )
+      ),
+      this.state.modal === 'faisal' ? h('div', { className:'modal-overlay', onClick: this.closeModal },
+        h('div', { onClick: e=>e.stopPropagation(), style: { background:'#f4efd8', padding: 28, maxWidth: 640, borderRadius: 4, border:'1px solid #7a6a3f', fontFamily:'Courier New, monospace' } },
+          h('div', { style: { fontWeight:'bold', fontSize:17, borderBottom:'1px solid #7a6a3f', paddingBottom:8, marginBottom: 12 } }, "Faisal's paper log — floor 3 incidents"),
+          h('div', { style: { fontSize:12, marginBottom: 12, color:'#5a5a3f' } }, 'He does not trust the ticketing system.'),
+          h('div', {style:{display:'grid', gap:10, fontSize:13}},
+            TICKETS_SEED.filter(t => t.anomaly).map(t => h('div',{key:t.id, style:{borderBottom:'1px dashed #7a6a3f', paddingBottom:6}},
+              h('div',{style:{fontWeight:'bold'}}, fmtNice(t.date) + ' · ' + t.id),
+              h('div',null, t.subject + ' · ' + t.raisedBy),
+              h('div',null, 'closed by: ' + (t.closedBy || '(blank)'))
+            )),
+            h('div', { style: { borderTop:'2px solid #7a6a3f', paddingTop:8, background:'#e6dbb5', padding:8 } },
+              h('div',{style:{fontWeight:'bold', color:'#7a1e13'}}, fmtNice(PAPER_TICKET_ONLY.raisedOn) + ' · ' + PAPER_TICKET_ONLY.id),
+              h('div',null, PAPER_TICKET_ONLY.subject),
+              h('div',null, PAPER_TICKET_ONLY.raisedBy),
+              h('div',{style:{fontStyle:'italic', marginTop:4}}, '"' + PAPER_TICKET_ONLY.note + '"')
+            )
+          ),
+          h('button', { onClick: this.closeModal, className:'old-btn', style:{marginTop: 16} }, 'Close')
+        )
+      ) : null
+    );
+  }
+
+  pageTicketNew() {
+    const [subject, setS] = [this.state.view.tSubj||'', v => this.setView({tSubj:v})];
+    const [desc, setD] = [this.state.view.tDesc||'', v => this.setView({tDesc:v})];
+    const [prio, setP] = [this.state.view.tPrio||'Med', v => this.setView({tPrio:v})];
+    const submit = () => {
+      const rec = this.addTicket({ subject, priority: prio, raisedBy: 'Admin (You)', raiserId:'E1' });
+      alert('Ticket ' + rec.id + ' logged.');
+      this.setView({tSubj:'',tDesc:'',tPrio:'Med'});
+      this.nav('/tickets');
+    };
+    return h('div', null,
+      h(PageTitle, { title:'Raise an IT ticket', sub:'Danish or Hamza will pick it up.' }),
+      h('div', { className:'old-card', style:{padding:20, maxWidth:600} },
+        h('div',{style:{marginBottom:12}},
+          h('label',{style:{fontSize:12, fontWeight:'bold', display:'block'}}, 'Subject'),
+          h('input',{value:subject, onChange:e=>setS(e.target.value), style:{width:'100%', marginTop:4}})
+        ),
+        h('div',{style:{marginBottom:12}},
+          h('label',{style:{fontSize:12, fontWeight:'bold', display:'block'}}, 'Priority'),
+          h('select',{value:prio, onChange:e=>setP(e.target.value), style:{marginTop:4}}, ['Low','Med','High'].map(x=>h('option',{key:x,value:x},x)))
+        ),
+        h('div',{style:{marginBottom:12}},
+          h('label',{style:{fontSize:12, fontWeight:'bold', display:'block'}}, 'Describe the issue'),
+          h('textarea',{value:desc, onChange:e=>setD(e.target.value), rows:5, style:{width:'100%', marginTop:4}})
+        ),
+        h('button',{className:'old-btn gold', onClick:submit, disabled: !subject}, 'Submit ticket')
+      )
+    );
+  }
+
+  pageTimesheets() {
+    const days = ['Mon','Tue','Wed','Thu','Fri'];
+    const jobs = ['NST-201 Nestlé Q4','TEL-118 Telenor OOH','HBL-088 HBL AR','INT-000 Internal','LUN-000 Lunch'];
+    return h('div', null,
+      h(PageTitle, { title:'Timesheets', sub:'This week · 15-min increments. Freeze at Sunday 23:59.' }),
+      h('div', { className:'old-card', style:{padding:0, overflow:'auto'} },
+        h('table',{className:'old-table'},
+          h('thead',null,h('tr',null, [h('th',{key:'j'},'Job bag'), ...days.map(d=>h('th',{key:d}, d + ' hrs'))])),
+          h('tbody',null, jobs.map((j,i) => h('tr',{key:j},
+            h('td',{style:{fontWeight:'bold', fontFamily:'monospace'}}, j),
+            ...days.map((d,k) => h('td',null, h('input',{type:'text', defaultValue: i===4? '1.00' : (0.75 + (i+k)%3*0.5).toFixed(2), style:{width:60, padding:'2px 4px', fontSize:11}})))
+          )))
+        )
+      ),
+      h('button',{className:'old-btn gold', style:{marginTop:10}}, 'Save week')
+    );
+  }
+
+  pageJobBags() {
+    const jobs = [
+      ['NST-201','Nestlé Q4 campaign','Nestlé Pakistan','C1 · Iman','15 Nov','Active'],
+      ['TEL-118','Telenor OOH refresh','Telenor','C23 · Salman','22 Nov','Active'],
+      ['HBL-088','HBL AR film','HBL','V1 · Saad','8 Dec','Active'],
+      ['UNL-042','Unilever social always-on','Unilever','S1 · Anmol','ongoing','Active'],
+      ['ALF-014','Bank Alfalah retail','Bank Alfalah','C14 · Shahzeb','10 Nov','On hold'],
+      ['CCA-090','Coca-Cola Ramadan','Coca-Cola','C1 · Iman','3 Jan','Pitch'],
+      ['ENG-006','Engro CSR','Engro','ST1 · Furqan','30 Nov','Active'],
+    ];
+    return h('div', null,
+      h(PageTitle, { title:'Job bags', sub:'Active projects across the agency.' }),
+      h('div', { className:'old-card', style:{padding:0} },
+        h('table',{className:'old-table'},
+          h('thead',null,h('tr',null, ['Bag #','Project','Client','Lead','Deadline','Status'].map(c=>h('th',{key:c},c)))),
+          h('tbody',null, jobs.map((r,i) => h('tr',{key:r[0], style:{cursor:'pointer'}, onClick:()=>this.nav('/job-bags/'+r[0])},
+            h('td',{style:{fontFamily:'monospace', fontWeight:'bold'}}, r[0]),
+            h('td',null, r[1]), h('td',null, r[2]), h('td',null,r[3]), h('td',null,r[4]),
+            h('td',null, h(Badge, { color: r[5]==='Active'?'green':r[5]==='On hold'?'amber':'grey' }, r[5].toUpperCase()))
+          )))
+        )
+      )
+    );
+  }
+
+  pageJobBagDetail(id) {
+    return h('div', null,
+      h('a',{onClick:()=>this.nav('/job-bags'), style:{cursor:'pointer', fontSize:12}}, '← Job bags'),
+      h(PageTitle, { title: id, sub:'Job bag detail' }),
+      h('div', { className:'old-card' },
+        h('div',{style:S.oldTitle}, 'BRIEF'),
+        h('div',{style:{padding:10, fontSize:12}}, 'Full-funnel campaign covering TVC, digital, OOH, and social. Two-month schedule from brief-in to launch.')
+      ),
+      h('div', { className:'old-card', style:{marginTop:12} },
+        h('div',{style:S.oldTitle}, 'TEAM'),
+        h('div',{style:{padding:10, fontSize:12}}, 'Lead: C1 Iman Zafar · Copy: W1 Mehreen · Strategy: ST2 Komal · Video: V1 Saad · Account: A1 Zunaira')
+      )
+    );
+  }
+
+  pageAnalytics() {
+    const {BarChart, Bar, LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid} = R;
+    if (!BarChart) return h('div', null, h(PageTitle,{title:'Analytics'}), 'Loading charts…');
+    const Tile = (title, chart, execTier) => h('div', { className:'new-card' },
+      h('div', {style:{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom: 10}},
+        h('div',{style:S.h2New}, title),
+        execTier ? h('div', {title:'Executive-tier (visible to you as superadmin)', style:{fontSize:14}}, '🔒') : null
+      ),
+      h('div', {style:{height: 220}},
+        h(ResponsiveContainer, {width:'100%', height:'100%'}, chart)
+      )
+    );
+    return h('div', null,
+      h(PageTitle, { title:'Analytics dashboards', sub:'Revenue, utilisation, profitability, media performance.' }),
+      h('div', { style: { display:'grid', gridTemplateColumns:'repeat(2,1fr)', gap: 16 } },
+        Tile('Revenue per account (PKR M)',
+          h(BarChart, {data: ANALYTICS.revenue},
+            h(CartesianGrid, {strokeDasharray:'3 3', stroke:'#eee'}),
+            h(XAxis, {dataKey:'account', tick:{fontSize:10}}),
+            h(YAxis, {tick:{fontSize:10}}),
+            h(Tooltip, null),
+            h(Bar, {dataKey:'value', fill:'#0F3B2E'})
+          ), true
+        ),
+        Tile('Utilisation (%)',
+          h(BarChart, {data: ANALYTICS.utilisation},
+            h(CartesianGrid, {strokeDasharray:'3 3', stroke:'#eee'}),
+            h(XAxis, {dataKey:'team', tick:{fontSize:10}}),
+            h(YAxis, {tick:{fontSize:10}}),
+            h(Tooltip, null),
+            h(Bar, {dataKey:'value', fill:'#C9A24B'})
+          ), false
+        ),
+        Tile('Project profitability (PKR M / mo)',
+          h(LineChart, {data: ANALYTICS.profitability},
+            h(CartesianGrid, {strokeDasharray:'3 3', stroke:'#eee'}),
+            h(XAxis, {dataKey:'month', tick:{fontSize:10}}),
+            h(YAxis, {tick:{fontSize:10}}),
+            h(Tooltip, null),
+            h(Line, {dataKey:'value', stroke:'#0F3B2E', strokeWidth:2, dot:false})
+          ), true
+        ),
+        Tile('Media performance (impressions M)',
+          h(LineChart, {data: ANALYTICS.mediaPerf},
+            h(CartesianGrid, {strokeDasharray:'3 3', stroke:'#eee'}),
+            h(XAxis, {dataKey:'month', tick:{fontSize:10}}),
+            h(YAxis, {tick:{fontSize:10}}),
+            h(Tooltip, null),
+            h(Line, {dataKey:'value', stroke:'#C9A24B', strokeWidth:2, dot:false})
+          ), false
+        )
+      )
+    );
+  }
+
+  pageAnnouncements() {
+    const items = [
+      { by:'Nida Aslam', when: subDays(today(),0), title:'Ramadan timings', body:'Ramadan timings begin next Tuesday. Iftar service in the canteen from 6:20 pm.' },
+      { by:'Nida Aslam', when: subDays(today(),1), title:'Q1 town hall Friday', body:'Reminder: Q1 town hall this Friday, 3 pm, Floor 3 boardroom.' },
+      { by:'Nida Aslam', when: subDays(today(),2), title:'New joiner', body:'Please welcome our new joiner — details on the People page.' },
+      { by:'Sana Mahmood', when: subDays(today(),6), title:'Reminder — expense receipts', body:'Please submit all outstanding receipts before month-end.' },
+      { by:'Bilal Ahmed', when: subDays(today(),9), title:'Generator servicing Sat', body:'Power may cut between 8 am–10 am while the generator is serviced.' },
+      { by:'Nida Aslam', when: subDays(today(),14), title:'Anniversary shout-outs', body:'Farah Siddiqui — 5 years. Basit Ehsan — 5 years. Congratulations!' }
+    ];
+    return h('div', null,
+      h(PageTitle, { title:'Announcements', sub:'Latest from Nida and the wider team.' }),
+      h('div', { style:{display:'flex', flexDirection:'column', gap:14} },
+        items.map((a,i) => h('div', {key:i, className:'new-card'},
+          h('div', {style:{display:'flex', justifyContent:'space-between', color:'var(--stone)', fontSize:12, marginBottom:6}},
+            h('div', null, a.by),
+            h('div', null, fmtNice(a.when))
+          ),
+          h('div', {className:'frn', style:{fontSize:20, marginBottom:6}}, a.title),
+          h('div', null, a.body)
+        ))
+      )
+    );
+  }
+
+  pageTownHalls() {
+    return h('div', null,
+      h(PageTitle, { title:'Town halls', sub:'Quarterly, all-hands.' }),
+      h('div', { style: { display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(260px,1fr))', gap: 16 } },
+        TOWNHALLS.map(t => h('div', {key:t.id, className:'new-card', style: t.missing ? { background:'#f7ecec' } : {} },
+          h('div', {style:{aspectRatio:'16/9', background: t.missing ? '#e5c8c4' : 'linear-gradient(135deg,#0F3B2E,#0A2A20)', color:'#fff', display:'flex', alignItems:'center', justifyContent:'center', borderRadius:6, marginBottom:12, fontSize:32}}, t.missing ? '⚠' : '▶'),
+          h('div',{className:'frn', style:{fontSize:18}}, t.title),
+          h('div',{style:{fontSize:12, color:'var(--stone)', margin:'4px 0 12px'}}, fmtNice(t.date) + ' · ' + t.duration),
+          t.missing
+            ? h('div', {style:{fontSize:12, color:'#7a1e13'}}, 'File corrupted — please contact IT.')
+            : h('button', {className:'new-btn ghost', onClick:()=>this.openModal('th:'+t.id)}, 'Play')
+        ))
+      ),
+      this.state.modal && this.state.modal.startsWith('th:') ? h('div', { className:'modal-overlay', onClick: this.closeModal },
+        h('div', { onClick:e=>e.stopPropagation(), style:{background:'#000', color:'#fff', padding:24, borderRadius: 8, maxWidth: 720, width:'100%'} },
+          h('div', {style:{aspectRatio:'16/9', background:'#111', display:'flex', alignItems:'center', justifyContent:'center', fontSize:48}}, '▶'),
+          h('div',{style:{fontSize:13, marginTop:12, opacity:.7}}, 'CC: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.'),
+          h('button', {onClick: this.closeModal, className:'new-btn', style:{marginTop:16}}, 'Close')
+        )
+      ) : null
+    );
+  }
+
+  pageFleet() {
+    const drivers = [
+      { name:'Ghulam Rasool', status:'Available', loc:'Office · basement parking' },
+      { name:'Nasir Mehmood', status:'On trip', loc:'DHA Phase 3 → Cantt (Faraz H.)' },
+      { name:'Riaz Khan', status:'Off duty', loc:'—' },
+      { name:'Iftikhar Ali', status:'Available', loc:'Gulberg III · standby' }
+    ];
+    const execs = ['E1','E2','E3','E4','E5','E6','E8'].map(id => findPerson(id));
+    // trips per exec
+    const areas = ['Gulberg III','DHA Phase 5','DHA Phase 3','MM Alam Road','Cantt','Model Town','Johar Town','Liberty Market','Fortress Stadium','Airport','Serena','Pearl Continental'];
+    const trips = (exec) => {
+      const list = [];
+      for (let i=0;i<5;i++) {
+        list.push({
+          date: subDays(today(), 1 + i*3),
+          time: hm(9 + Math.floor(rng()*10), Math.floor(rng()*60)),
+          from: pick(areas), to: pick(areas),
+          fare: 'PKR ' + (300 + Math.floor(rng()*800))
+        });
+      }
+      if (exec.id === 'E2') {
+        list[0] = { date: RECENT_TUE, time:'18:55', from:'Liberty Market', to:'DHA Phase 3', fare:'PKR 720', flag:true };
+      }
+      return list;
+    };
+    return h('div', null,
+      h('div', { style: { background:'#f4efd8', border:'1px solid #b8a76b', padding:'8px 14px', borderRadius:4, marginBottom: 14, fontSize:12 } },
+        'You are viewing this as: ', h('b', null, 'Superadmin'), ' (full visibility)'
+      ),
+      h(PageTitle, { title:'Fleet & driver tracker', sub:'Company drivers and executive Uber accounts.' }),
+      h('div', { className:'old-card', style: { marginBottom: 16 } },
+        h('div', { style: S.oldTitle }, 'PANEL 1 — COMPANY DRIVERS'),
+        h('table', {className:'old-table', style:{marginTop:6}},
+          h('thead', null, h('tr', null, ['Driver','Status','Current location'].map(c=>h('th',{key:c},c)))),
+          h('tbody', null, drivers.map((d,i) => h('tr',{key:i},
+            h('td',{style:{fontWeight:'bold'}}, d.name),
+            h('td',null, h(Badge, { color: d.status==='Available'?'green':d.status==='On trip'?'amber':'grey' }, d.status.toUpperCase())),
+            h('td',null, d.loc)
+          )))
+        )
+      ),
+      h('div', { className:'old-card' },
+        h('div', { style: S.oldTitle }, 'PANEL 2 — EXECUTIVE UBER ACCOUNTS · LAST 5 TRIPS'),
+        h('div', {style:{padding:8}},
+          execs.map(e => h('div', {key:e.id, style:{marginBottom:12}},
+            h('div', {style:{fontWeight:'bold', fontSize:12, padding:'4px 6px', background:'#e8e5d5'}}, e.name + ' · ' + e.role),
+            h('table',{className:'old-table', style:{width:'100%'}},
+              h('thead',null, h('tr',null, ['Date','Time','From','To','Fare'].map(c=>h('th',{key:c},c)))),
+              h('tbody',null, trips(e).map((t,i) => h('tr', {key:i, style: t.flag ? { borderLeft:'4px solid #d4a437', background:'#faf4e0' } : {}},
+                h('td',null, fmtNice(t.date)), h('td',null, t.time), h('td',null, t.from), h('td',null, t.to), h('td',null, t.fare)
+              )))
+            )
+          ))
+        )
+      )
+    );
+  }
+
+  pageAdmin() {
+    const tiles = [
+      ['Superuser log','17 uses of sys_admin_emergency','/admin/superuser-log'],
+      ['Sign-in override log',BILAL_OVERRIDES.length + ' PIN overrides (Bilal Ahmed)','/admin/overrides'],
+      ['Glitch cluster analysis','FAILED TO WRITE incidents · 12 months','/admin/glitches'],
+      ['Access audit','Who has admin on what module','/admin/access'],
+      ['Module version map','New hub / Old hub inventory','/admin/modules']
+    ];
+    return h('div', null,
+      h(PageTitle, { title:'Admin', sub:'Superadmin — full visibility.' }),
+      h('div', { style: { display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(280px,1fr))', gap: 16 } },
+        tiles.map(t => h('div', {key:t[0], className:'new-card', style:{cursor:'pointer'}, onClick: () => this.nav(t[2])},
+          h('div',{className:'frn', style:{fontSize:20, marginBottom:6}}, t[0]),
+          h('div',{style:{color:'var(--stone)', fontSize:13}}, t[1])
+        ))
+      )
+    );
+  }
+
+  pageSuperuserLog() {
+    return h('div', null,
+      h(PageTitle, { title:'Superuser log', sub:'Account: sys_admin_emergency · created by s.sethi · never audited.' }),
+      h('div', { className:'old-card', style:{padding:0} },
+        h('table',{className:'old-table'},
+          h('thead',null,h('tr',null,['Date','Time','Module','Action','IP'].map(c=>h('th',{key:c},c)))),
+          h('tbody',null, SUPERUSER_LOG.map((r,i)=>h('tr',{key:i, style: r.action==='OVERRIDE'?{background:'#f7ecec'}:{}},
+            h('td',null, fmtNice(r.date)), h('td',null,r.time), h('td',null,r.module),
+            h('td',null, h(Badge, { color: r.action==='OVERRIDE'?'red':'grey' }, r.action)),
+            h('td',{style:{fontFamily:'monospace'}}, r.ip)
+          )))
+        )
+      )
+    );
+  }
+
+  pageOverrides() {
+    return h('div', null,
+      h(PageTitle, { title:'Sign-in override log', sub:BILAL_OVERRIDES.length + ' uses of Bilal\'s PIN over the last year. Visitor identity not captured.' }),
+      h('div', { className:'old-card', style:{padding:0, maxHeight:600, overflow:'auto'} },
+        h('table',{className:'old-table'},
+          h('thead',null,h('tr',null,['Date','Time','PIN','Reason logged'].map(c=>h('th',{key:c},c)))),
+          h('tbody',null, BILAL_OVERRIDES.map((r,i)=>h('tr',{key:i},
+            h('td',null, fmtNice(r.date)), h('td',null,r.time),
+            h('td',{style:{fontFamily:'monospace'}}, r.pin), h('td',null, r.reason)
+          )))
+        )
+      )
+    );
+  }
+
+  pageGlitches() {
+    const {ScatterChart, Scatter, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Legend, ZAxis} = R;
+    if (!ScatterChart) return h('div', null, 'Loading…');
+    const dowNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+    const farazData = FAIL_12MO.filter(e => e.hostId === 'E2').map(e => ({ x: e.dow, y: e.hour + e.min/60 }));
+    const otherData = FAIL_12MO.filter(e => e.hostId !== 'E2').map(e => ({ x: e.dow, y: e.hour + e.min/60 }));
+    // failures by host
+    const counts = {};
+    FAIL_12MO.forEach(e => counts[e.hostId] = (counts[e.hostId]||0)+1);
+    const byHost = Object.entries(counts).sort((a,b) => b[1]-a[1]).slice(0, 10);
+    return h('div', null,
+      h(PageTitle, { title:'Glitch cluster analysis', sub:'FAILED TO WRITE incidents · last 12 months · visitor log module' }),
+      h('div', { className:'new-card', style:{marginBottom:16} },
+        h('div', {style:{height: 380}},
+          h(ResponsiveContainer, {width:'100%', height:'100%'},
+            h(ScatterChart, { margin: { top: 20, right: 20, bottom: 40, left: 40 } },
+              h(CartesianGrid, {strokeDasharray:'3 3', stroke:'#eee'}),
+              h(XAxis, { type:'number', dataKey:'x', domain:[0,6], ticks:[0,1,2,3,4,5,6], tickFormatter:(v)=>dowNames[v], name:'Day', label:{value:'Day of week', position:'insideBottom', offset:-20} }),
+              h(YAxis, { type:'number', dataKey:'y', domain:[0,24], ticks:[0,6,12,18,24], tickFormatter:(v)=>pad(v)+':00', name:'Hour', label:{value:'Hour of day', angle:-90, position:'insideLeft', offset:5} }),
+              h(Tooltip, { formatter:(v,n)=> n==='y'? pad(Math.floor(v))+':'+pad(Math.round((v%1)*60)) : dowNames[v], cursor:{strokeDasharray:'3 3'} }),
+              h(Legend, { verticalAlign:'top' }),
+              h(Scatter, { name: 'Host: Faraz Habib (E2)', data: farazData, fill: '#A03A2E' }),
+              h(Scatter, { name: 'Host: other', data: otherData, fill: '#8a8a80', fillOpacity: .7 })
+            )
+          )
+        )
+      ),
+      h('div', { className:'new-card' },
+        h('div', {style:S.h2New}, 'Failures by host'),
+        h('table', {className:'new-table'},
+          h('thead',null,h('tr',null,['Host','Failures (12mo)'].map(c=>h('th',{key:c},c)))),
+          h('tbody',null, byHost.map(([id,c],i) => {
+            const p = findPerson(id);
+            return h('tr',{key:id, style: id==='E2'?{background:'#faf4e0'}:{}},
+              h('td', null, p ? (p.name + ' (' + p.id + ')') : id),
+              h('td', null, c)
+            );
+          }))
+        )
+      )
+    );
+  }
+
+  pageAccess() {
+    const rows = [
+      ['Visitor Log — Admin','Bilal Ahmed (R3)','2019','—'],
+      ['Visitor Log — Admin','Zoya Khan (T4)','2024','audit trail'],
+      ['Exec Calendar — Full','Hira Malik (R2)','2020','⚠ unrevoked from 2020 exec-assistant role'],
+      ['Exec Calendar — Full','Every executive assistant','ongoing','—'],
+      ['Payroll — Full','Adnan Baig (F1)','2022','—'],
+      ['Payroll — Full','Waleed Akram (F5)','2020','—'],
+      ['HR — Raw responses','Sana Mahmood (H1)','2021','—'],
+      ['IT — Master','Usman Raza (T1)','2013','root'],
+      ['sys_admin_emergency','s.sethi','2022','never audited']
+    ];
+    return h('div', null,
+      h(PageTitle, { title:'Access audit', sub:'Who has admin on what module.' }),
+      h('div', { className:'new-card', style:{padding:0} },
+        h('table', {className:'new-table'},
+          h('thead',null,h('tr',null,['Module','Person','Granted','Notes'].map(c=>h('th',{key:c},c)))),
+          h('tbody',null, rows.map((r,i)=>h('tr',{key:i, style: r[3].startsWith('⚠')?{background:'#faf4e0'}:{}},
+            h('td', null, r[0]), h('td', null, r[1]), h('td', null, r[2]), h('td', {style:{color: r[3].startsWith('⚠')?'#7a5b1e':'var(--stone)', fontSize:12}}, r[3])
+          )))
+        )
+      )
+    );
+  }
+
+  pageModules() {
+    const modules = [
+      ['Directory','New hub','React','Zoya Khan','2024'],
+      ['Job postings','New hub','React','Zoya Khan','2024'],
+      ['Analytics','New hub','React + Recharts','Zoya Khan','2025'],
+      ['Announcements','New hub','React','Zoya Khan','2025'],
+      ['Visitor Log','Old hub','PHP (WP)','Danish + external contractor','2019, patched'],
+      ['Meeting rooms','Old hub','PHP (WP)','WP plugin, forked','2019'],
+      ['Couriers','Old hub','PHP (WP)','contractor','2020'],
+      ['IT Tickets','Old hub','OS-Ticket 1.9','contractor','2019'],
+      ['Timesheets','Old hub','PHP (WP)','contractor','2020'],
+      ['Expenses','Old hub','PHP (WP)','contractor','2020'],
+      ['Facilities','Old hub','PHP (WP)','internal','2019']
+    ];
+    return h('div', null,
+      h(PageTitle, { title:'Module version map', sub:'Which parts of the hub are which era.' }),
+      h('div', { className:'new-card', style:{padding:0} },
+        h('table',{className:'new-table'},
+          h('thead',null,h('tr',null,['Module','Era','Stack','Owner','Since'].map(c=>h('th',{key:c},c)))),
+          h('tbody',null, modules.map((r,i)=>h('tr',{key:i},
+            h('td',null,r[0]),
+            h('td',null, h(Badge, { color: r[1]==='New hub'?'green':'amber' }, r[1])),
+            h('td', {style:{fontFamily:'monospace', fontSize:12}}, r[2]), h('td', null, r[3]), h('td', null, r[4])
+          )))
+        )
+      )
+    );
+  }
+
+  // ========== renderVals ==========
+  renderVals() {
+    const route = this.state.route;
+    const isFull = route === '/login' || route === '/visitor-log/tablet';
+    const page = this.renderPage(route);
+    const sidebarEl = this.renderSidebar(route);
+    return {
+      route,
+      fullScreen: isFull,
+      shellMode: !isFull,
+      page,
+      sidebarEl,
+      navHome: this.navHome
+    };
+  }
+}
+
+</script>
+</body>
+</html>
